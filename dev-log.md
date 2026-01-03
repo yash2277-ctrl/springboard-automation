@@ -10,3 +10,7 @@ Running development notes.
 ## 2026-01-03
 - refactor: separate concerns in data fetching layer
 
+
+## 2026-01-03
+- fix: correct sidebar collapse animation
+
