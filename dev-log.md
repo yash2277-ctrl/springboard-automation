@@ -14,3 +14,7 @@ Running development notes.
 ## 2026-01-03
 - fix: correct sidebar collapse animation
 
+
+## 2026-01-03
+- style: fix inconsistent spacing in components
+
