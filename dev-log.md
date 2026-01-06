@@ -18,3 +18,7 @@ Running development notes.
 ## 2026-01-03
 - style: fix inconsistent spacing in components
 
+
+## 2026-01-06
+- fix: resolve infinite scroll not triggering
+
