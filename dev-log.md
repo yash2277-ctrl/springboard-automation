@@ -26,3 +26,7 @@ Running development notes.
 ## 2026-01-07
 - feat: support dark mode via CSS custom properties
 
+
+## 2026-01-07
+- refactor: extract auth logic into custom hook
+
