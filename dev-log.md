@@ -22,3 +22,7 @@ Running development notes.
 ## 2026-01-06
 - fix: resolve infinite scroll not triggering
 
+
+## 2026-01-07
+- feat: support dark mode via CSS custom properties
+
