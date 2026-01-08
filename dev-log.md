@@ -30,3 +30,7 @@ Running development notes.
 ## 2026-01-07
 - refactor: extract auth logic into custom hook
 
+
+## 2026-01-08
+- refactor: extract helper function for date formatting
+
