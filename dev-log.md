@@ -34,3 +34,7 @@ Running development notes.
 ## 2026-01-08
 - refactor: extract helper function for date formatting
 
+
+## 2026-01-09
+- refactor: move constants to dedicated config file
+
