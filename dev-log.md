@@ -38,3 +38,7 @@ Running development notes.
 ## 2026-01-09
 - refactor: move constants to dedicated config file
 
+
+## 2026-01-13
+- feat: add success and error toast notifications
+
