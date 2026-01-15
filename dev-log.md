@@ -42,3 +42,7 @@ Running development notes.
 ## 2026-01-13
 - feat: add success and error toast notifications
 
+
+## 2026-01-15
+- style: fix overflow issue in long text cells
+
