@@ -50,3 +50,7 @@ Running development notes.
 ## 2026-01-16
 - fix: resolve edge case in input validation
 
+
+## 2026-01-16
+- style: increase tap target size on mobile
+
