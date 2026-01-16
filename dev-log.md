@@ -46,3 +46,7 @@ Running development notes.
 ## 2026-01-15
 - style: fix overflow issue in long text cells
 
+
+## 2026-01-16
+- fix: resolve edge case in input validation
+
