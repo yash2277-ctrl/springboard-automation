@@ -54,3 +54,7 @@ Running development notes.
 ## 2026-01-16
 - style: increase tap target size on mobile
 
+
+## 2026-01-17
+- docs: update README with latest setup steps
+
