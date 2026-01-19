@@ -58,3 +58,7 @@ Running development notes.
 ## 2026-01-17
 - docs: update README with latest setup steps
 
+
+## 2026-01-19
+- fix: sanitize user input before display
+
