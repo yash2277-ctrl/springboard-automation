@@ -62,3 +62,7 @@ Running development notes.
 ## 2026-01-19
 - fix: sanitize user input before display
 
+
+## 2026-01-20
+- fix: ensure logout clears all session data
+
