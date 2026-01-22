@@ -66,3 +66,7 @@ Running development notes.
 ## 2026-01-20
 - fix: ensure logout clears all session data
 
+
+## 2026-01-22
+- docs: update API response shape documentation
+
