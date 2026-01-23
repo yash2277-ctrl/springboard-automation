@@ -70,3 +70,7 @@ Running development notes.
 ## 2026-01-22
 - docs: update API response shape documentation
 
+
+## 2026-01-23
+- perf: cache API responses in session storage
+
