@@ -74,3 +74,7 @@ Running development notes.
 ## 2026-01-23
 - perf: cache API responses in session storage
 
+
+## 2026-01-24
+- refactor: convert callback patterns to async await
+
