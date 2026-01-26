@@ -78,3 +78,7 @@ Running development notes.
 ## 2026-01-24
 - refactor: convert callback patterns to async await
 
+
+## 2026-01-26
+- feat: add export to CSV functionality
+
