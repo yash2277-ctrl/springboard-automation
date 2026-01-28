@@ -82,3 +82,7 @@ Running development notes.
 ## 2026-01-26
 - feat: add export to CSV functionality
 
+
+## 2026-01-28
+- perf: avoid unnecessary re-renders with useCallback
+
