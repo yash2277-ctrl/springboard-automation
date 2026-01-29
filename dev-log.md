@@ -86,3 +86,7 @@ Running development notes.
 ## 2026-01-28
 - perf: avoid unnecessary re-renders with useCallback
 
+
+## 2026-01-29
+- refactor: convert callback patterns to async await
+
