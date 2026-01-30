@@ -94,3 +94,7 @@ Running development notes.
 ## 2026-01-30
 - chore: upgrade node engine requirement to v20
 
+
+## 2026-01-30
+- fix: handle network timeout with user feedback
+
