@@ -90,3 +90,7 @@ Running development notes.
 ## 2026-01-29
 - refactor: convert callback patterns to async await
 
+
+## 2026-01-30
+- chore: upgrade node engine requirement to v20
+
