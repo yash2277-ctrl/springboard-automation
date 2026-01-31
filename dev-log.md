@@ -98,3 +98,7 @@ Running development notes.
 ## 2026-01-30
 - fix: handle network timeout with user feedback
 
+
+## 2026-01-31
+- refactor: extract auth logic into custom hook
+
