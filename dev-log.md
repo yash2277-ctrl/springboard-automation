@@ -102,3 +102,7 @@ Running development notes.
 ## 2026-01-31
 - refactor: extract auth logic into custom hook
 
+
+## 2026-02-02
+- docs: update API response shape documentation
+
