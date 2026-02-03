@@ -106,3 +106,7 @@ Running development notes.
 ## 2026-02-02
 - docs: update API response shape documentation
 
+
+## 2026-02-03
+- style: increase tap target size on mobile
+
