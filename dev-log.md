@@ -110,3 +110,7 @@ Running development notes.
 ## 2026-02-03
 - style: increase tap target size on mobile
 
+
+## 2026-02-04
+- refactor: convert callback patterns to async await
+
