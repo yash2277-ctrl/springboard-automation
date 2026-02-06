@@ -114,3 +114,7 @@ Running development notes.
 ## 2026-02-04
 - refactor: convert callback patterns to async await
 
+
+## 2026-02-06
+- chore: update package-lock.json
+
