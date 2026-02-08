@@ -118,3 +118,7 @@ Running development notes.
 ## 2026-02-06
 - chore: update package-lock.json
 
+
+## 2026-02-08
+- fix: handle concurrent requests with abort controller
+
