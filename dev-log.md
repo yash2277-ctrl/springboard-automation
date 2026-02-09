@@ -122,3 +122,7 @@ Running development notes.
 ## 2026-02-08
 - fix: handle concurrent requests with abort controller
 
+
+## 2026-02-09
+- perf: cache API responses in session storage
+
