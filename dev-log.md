@@ -126,3 +126,7 @@ Running development notes.
 ## 2026-02-09
 - perf: cache API responses in session storage
 
+
+## 2026-02-11
+- feat: add multi-select for bulk actions
+
