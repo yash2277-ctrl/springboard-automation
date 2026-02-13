@@ -130,3 +130,7 @@ Running development notes.
 ## 2026-02-11
 - feat: add multi-select for bulk actions
 
+
+## 2026-02-13
+- docs: document all environment variables
+
