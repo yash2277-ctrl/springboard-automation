@@ -134,3 +134,7 @@ Running development notes.
 ## 2026-02-13
 - docs: document all environment variables
 
+
+## 2026-02-14
+- feat: add copy-to-clipboard utility
+
