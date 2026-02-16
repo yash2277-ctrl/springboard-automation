@@ -138,3 +138,7 @@ Running development notes.
 ## 2026-02-14
 - feat: add copy-to-clipboard utility
 
+
+## 2026-02-16
+- fix: patch memory leak in event listener cleanup
+
