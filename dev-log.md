@@ -142,3 +142,7 @@ Running development notes.
 ## 2026-02-16
 - fix: patch memory leak in event listener cleanup
 
+
+## 2026-02-16
+- chore: update .gitignore for OS-specific files
+
