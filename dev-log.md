@@ -146,3 +146,7 @@ Running development notes.
 ## 2026-02-16
 - chore: update .gitignore for OS-specific files
 
+
+## 2026-02-17
+- style: standardize z-index scale
+
