@@ -150,3 +150,7 @@ Running development notes.
 ## 2026-02-17
 - style: standardize z-index scale
 
+
+## 2026-02-18
+- fix: guard against undefined user in context
+
