@@ -154,3 +154,7 @@ Running development notes.
 ## 2026-02-18
 - fix: guard against undefined user in context
 
+
+## 2026-02-19
+- style: increase tap target size on mobile
+
