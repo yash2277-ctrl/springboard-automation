@@ -158,3 +158,7 @@ Running development notes.
 ## 2026-02-19
 - style: increase tap target size on mobile
 
+
+## 2026-02-21
+- feat: add export to CSV functionality
+
