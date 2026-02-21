@@ -162,3 +162,7 @@ Running development notes.
 ## 2026-02-21
 - feat: add export to CSV functionality
 
+
+## 2026-02-21
+- fix: ensure focus trap inside modal dialogs
+
