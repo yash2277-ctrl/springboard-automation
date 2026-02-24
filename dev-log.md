@@ -166,3 +166,7 @@ Running development notes.
 ## 2026-02-21
 - fix: ensure focus trap inside modal dialogs
 
+
+## 2026-02-24
+- fix: correct sidebar collapse animation
+
