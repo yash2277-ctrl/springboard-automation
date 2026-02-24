@@ -170,3 +170,7 @@ Running development notes.
 ## 2026-02-24
 - fix: correct sidebar collapse animation
 
+
+## 2026-02-24
+- perf: memoize expensive list rendering
+
