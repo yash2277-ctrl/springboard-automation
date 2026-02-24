@@ -174,3 +174,7 @@ Running development notes.
 ## 2026-02-24
 - perf: memoize expensive list rendering
 
+
+## 2026-02-24
+- docs: update API response shape documentation
+
