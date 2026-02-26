@@ -178,3 +178,7 @@ Running development notes.
 ## 2026-02-24
 - docs: update API response shape documentation
 
+
+## 2026-02-26
+- fix: ensure focus trap inside modal dialogs
+
