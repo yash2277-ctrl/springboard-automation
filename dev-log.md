@@ -182,3 +182,7 @@ Running development notes.
 ## 2026-02-26
 - fix: ensure focus trap inside modal dialogs
 
+
+## 2026-02-27
+- fix: correct route guard redirect logic
+
