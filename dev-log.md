@@ -186,3 +186,7 @@ Running development notes.
 ## 2026-02-27
 - fix: correct route guard redirect logic
 
+
+## 2026-02-27
+- docs: update contributing guide with code style rules
+
