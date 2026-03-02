@@ -194,3 +194,7 @@ Running development notes.
 ## 2026-03-02
 - fix: ensure focus trap inside modal dialogs
 
+
+## 2026-03-02
+- style: apply consistent font-size scale
+
