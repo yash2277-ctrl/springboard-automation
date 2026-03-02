@@ -190,3 +190,7 @@ Running development notes.
 ## 2026-02-27
 - docs: update contributing guide with code style rules
 
+
+## 2026-03-02
+- fix: ensure focus trap inside modal dialogs
+
