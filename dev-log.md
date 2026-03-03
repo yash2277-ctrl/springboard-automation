@@ -202,3 +202,7 @@ Running development notes.
 ## 2026-03-03
 - docs: add deployment guide for production
 
+
+## 2026-03-03
+- fix: prevent flash of unstyled content on load
+
