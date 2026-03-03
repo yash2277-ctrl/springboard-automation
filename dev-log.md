@@ -198,3 +198,7 @@ Running development notes.
 ## 2026-03-02
 - style: apply consistent font-size scale
 
+
+## 2026-03-03
+- docs: add deployment guide for production
+
