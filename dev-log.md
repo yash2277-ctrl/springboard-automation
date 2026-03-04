@@ -206,3 +206,7 @@ Running development notes.
 ## 2026-03-03
 - fix: prevent flash of unstyled content on load
 
+
+## 2026-03-04
+- fix: ensure focus trap inside modal dialogs
+
