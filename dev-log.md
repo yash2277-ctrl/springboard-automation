@@ -214,3 +214,7 @@ Running development notes.
 ## 2026-03-05
 - chore: remove unused imports and dead code
 
+
+## 2026-03-05
+- feat: add loading skeleton for async data
+
