@@ -210,3 +210,7 @@ Running development notes.
 ## 2026-03-04
 - fix: ensure focus trap inside modal dialogs
 
+
+## 2026-03-05
+- chore: remove unused imports and dead code
+
