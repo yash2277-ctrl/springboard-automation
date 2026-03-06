@@ -218,3 +218,7 @@ Running development notes.
 ## 2026-03-05
 - feat: add loading skeleton for async data
 
+
+## 2026-03-06
+- fix: handle token expiry with automatic refresh
+
