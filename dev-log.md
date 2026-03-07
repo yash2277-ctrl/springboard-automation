@@ -222,3 +222,7 @@ Running development notes.
 ## 2026-03-06
 - fix: handle token expiry with automatic refresh
 
+
+## 2026-03-07
+- refactor: replace magic numbers with named constants
+
