@@ -226,3 +226,7 @@ Running development notes.
 ## 2026-03-07
 - refactor: replace magic numbers with named constants
 
+
+## 2026-03-10
+- feat: add accessible aria labels to icon buttons
+
