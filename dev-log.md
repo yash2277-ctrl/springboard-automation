@@ -230,3 +230,7 @@ Running development notes.
 ## 2026-03-10
 - feat: add accessible aria labels to icon buttons
 
+
+## 2026-03-11
+- fix: correct CORS headers for preflight requests
+
