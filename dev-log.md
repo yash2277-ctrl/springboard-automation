@@ -238,3 +238,7 @@ Running development notes.
 ## 2026-03-12
 - feat: add retry button on network error screen
 
+
+## 2026-03-12
+- feat: add copy-to-clipboard utility
+
