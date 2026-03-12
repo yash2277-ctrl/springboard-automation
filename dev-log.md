@@ -234,3 +234,7 @@ Running development notes.
 ## 2026-03-11
 - fix: correct CORS headers for preflight requests
 
+
+## 2026-03-12
+- feat: add retry button on network error screen
+
