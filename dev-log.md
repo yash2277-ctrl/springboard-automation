@@ -242,3 +242,7 @@ Running development notes.
 ## 2026-03-12
 - feat: add copy-to-clipboard utility
 
+
+## 2026-03-13
+- feat: support dark mode via CSS custom properties
+
