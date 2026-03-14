@@ -246,3 +246,7 @@ Running development notes.
 ## 2026-03-13
 - feat: support dark mode via CSS custom properties
 
+
+## 2026-03-14
+- fix: sanitize filename before file system write
+
