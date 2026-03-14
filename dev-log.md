@@ -250,3 +250,7 @@ Running development notes.
 ## 2026-03-14
 - fix: sanitize filename before file system write
 
+
+## 2026-03-14
+- refactor: extract auth logic into custom hook
+
