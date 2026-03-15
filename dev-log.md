@@ -254,3 +254,7 @@ Running development notes.
 ## 2026-03-14
 - refactor: extract auth logic into custom hook
 
+
+## 2026-03-15
+- refactor: replace magic numbers with named constants
+
