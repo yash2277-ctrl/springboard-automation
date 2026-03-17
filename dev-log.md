@@ -258,3 +258,7 @@ Running development notes.
 ## 2026-03-15
 - refactor: replace magic numbers with named constants
 
+
+## 2026-03-17
+- feat: display relative timestamps
+
