@@ -270,3 +270,7 @@ Running development notes.
 ## 2026-03-19
 - chore: update package-lock.json
 
+
+## 2026-03-20
+- docs: improve onboarding guide for new contributors
+
