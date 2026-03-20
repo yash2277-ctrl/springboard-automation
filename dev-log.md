@@ -274,3 +274,7 @@ Running development notes.
 ## 2026-03-20
 - docs: improve onboarding guide for new contributors
 
+
+## 2026-03-20
+- fix: handle concurrent requests with abort controller
+
