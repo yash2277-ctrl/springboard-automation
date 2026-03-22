@@ -278,3 +278,7 @@ Running development notes.
 ## 2026-03-20
 - fix: handle concurrent requests with abort controller
 
+
+## 2026-03-22
+- feat: store user preferences in backend profile
+
