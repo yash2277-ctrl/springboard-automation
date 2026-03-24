@@ -286,3 +286,7 @@ Running development notes.
 ## 2026-03-24
 - style: use CSS grid instead of flexbox for layout
 
+
+## 2026-03-24
+- feat: add error boundary to root component
+
