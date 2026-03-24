@@ -282,3 +282,7 @@ Running development notes.
 ## 2026-03-22
 - feat: store user preferences in backend profile
 
+
+## 2026-03-24
+- style: use CSS grid instead of flexbox for layout
+
