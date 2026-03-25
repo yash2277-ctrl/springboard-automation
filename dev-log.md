@@ -290,3 +290,7 @@ Running development notes.
 ## 2026-03-24
 - feat: add error boundary to root component
 
+
+## 2026-03-25
+- refactor: separate concerns in data fetching layer
+
