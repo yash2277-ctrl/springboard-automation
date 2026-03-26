@@ -298,3 +298,7 @@ Running development notes.
 ## 2026-03-25
 - feat: add keyboard shortcut for quick search
 
+
+## 2026-03-26
+- chore: configure prettier formatting rules
+
