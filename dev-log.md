@@ -302,3 +302,7 @@ Running development notes.
 ## 2026-03-26
 - chore: configure prettier formatting rules
 
+
+## 2026-03-29
+- fix: correct off-by-one error in pagination
+
