@@ -310,3 +310,7 @@ Running development notes.
 ## 2026-03-30
 - fix: correct CORS headers for preflight requests
 
+
+## 2026-03-30
+- feat: implement local storage persistence for theme
+
