@@ -306,3 +306,7 @@ Running development notes.
 ## 2026-03-29
 - fix: correct off-by-one error in pagination
 
+
+## 2026-03-30
+- fix: correct CORS headers for preflight requests
+
