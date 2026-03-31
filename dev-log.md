@@ -314,3 +314,7 @@ Running development notes.
 ## 2026-03-30
 - feat: implement local storage persistence for theme
 
+
+## 2026-03-31
+- feat: add keyboard navigation to dropdown menus
+
