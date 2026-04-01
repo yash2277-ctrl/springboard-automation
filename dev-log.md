@@ -318,3 +318,7 @@ Running development notes.
 ## 2026-03-31
 - feat: add keyboard navigation to dropdown menus
 
+
+## 2026-04-01
+- feat: add search history to local storage
+
