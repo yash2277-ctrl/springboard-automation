@@ -322,3 +322,7 @@ Running development notes.
 ## 2026-04-01
 - feat: add search history to local storage
 
+
+## 2026-04-02
+- docs: add inline comments to complex functions
+
