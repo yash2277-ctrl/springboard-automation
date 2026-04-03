@@ -326,3 +326,7 @@ Running development notes.
 ## 2026-04-02
 - docs: add inline comments to complex functions
 
+
+## 2026-04-03
+- perf: virtualize long list for performance
+
