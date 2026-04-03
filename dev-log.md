@@ -330,3 +330,7 @@ Running development notes.
 ## 2026-04-03
 - perf: virtualize long list for performance
 
+
+## 2026-04-03
+- fix: handle null response from API gracefully
+
