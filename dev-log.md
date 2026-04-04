@@ -334,3 +334,7 @@ Running development notes.
 ## 2026-04-03
 - fix: handle null response from API gracefully
 
+
+## 2026-04-04
+- feat: add search history to local storage
+
