@@ -338,3 +338,7 @@ Running development notes.
 ## 2026-04-04
 - feat: add search history to local storage
 
+
+## 2026-04-06
+- style: apply consistent font-size scale
+
