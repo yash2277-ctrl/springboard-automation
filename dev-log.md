@@ -342,3 +342,7 @@ Running development notes.
 ## 2026-04-06
 - style: apply consistent font-size scale
 
+
+## 2026-04-08
+- feat: add confirmation dialog for destructive actions
+
