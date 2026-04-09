@@ -346,3 +346,7 @@ Running development notes.
 ## 2026-04-08
 - feat: add confirmation dialog for destructive actions
 
+
+## 2026-04-09
+- fix: handle concurrent requests with abort controller
+
