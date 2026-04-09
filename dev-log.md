@@ -350,3 +350,7 @@ Running development notes.
 ## 2026-04-09
 - fix: handle concurrent requests with abort controller
 
+
+## 2026-04-09
+- style: fix overflow issue in long text cells
+
