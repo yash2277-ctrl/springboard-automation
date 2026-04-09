@@ -354,3 +354,7 @@ Running development notes.
 ## 2026-04-09
 - style: fix overflow issue in long text cells
 
+
+## 2026-04-09
+- style: unify button hover states across pages
+
