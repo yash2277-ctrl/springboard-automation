@@ -358,3 +358,7 @@ Running development notes.
 ## 2026-04-09
 - style: unify button hover states across pages
 
+
+## 2026-04-10
+- feat: add accessible aria labels to icon buttons
+
