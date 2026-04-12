@@ -362,3 +362,7 @@ Running development notes.
 ## 2026-04-10
 - feat: add accessible aria labels to icon buttons
 
+
+## 2026-04-12
+- feat: implement pagination in API responses
+
