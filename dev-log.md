@@ -366,3 +366,7 @@ Running development notes.
 ## 2026-04-12
 - feat: implement pagination in API responses
 
+
+## 2026-04-14
+- perf: split code at route boundaries
+
