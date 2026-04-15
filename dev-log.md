@@ -370,3 +370,7 @@ Running development notes.
 ## 2026-04-14
 - perf: split code at route boundaries
 
+
+## 2026-04-15
+- feat: add success and error toast notifications
+
