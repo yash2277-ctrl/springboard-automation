@@ -374,3 +374,7 @@ Running development notes.
 ## 2026-04-15
 - feat: add success and error toast notifications
 
+
+## 2026-04-16
+- feat: add export to CSV functionality
+
