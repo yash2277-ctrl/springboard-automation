@@ -378,3 +378,7 @@ Running development notes.
 ## 2026-04-16
 - feat: add export to CSV functionality
 
+
+## 2026-04-18
+- refactor: simplify conditional rendering logic
+
