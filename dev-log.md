@@ -386,3 +386,7 @@ Running development notes.
 ## 2026-04-18
 - style: unify button hover states across pages
 
+
+## 2026-04-20
+- refactor: simplify conditional rendering logic
+
