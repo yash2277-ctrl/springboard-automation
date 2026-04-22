@@ -390,3 +390,7 @@ Running development notes.
 ## 2026-04-20
 - refactor: simplify conditional rendering logic
 
+
+## 2026-04-22
+- docs: update contributing guide with code style rules
+
