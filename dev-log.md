@@ -394,3 +394,7 @@ Running development notes.
 ## 2026-04-22
 - docs: update contributing guide with code style rules
 
+
+## 2026-04-23
+- chore: configure prettier formatting rules
+
