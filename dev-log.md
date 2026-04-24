@@ -398,3 +398,7 @@ Running development notes.
 ## 2026-04-23
 - chore: configure prettier formatting rules
 
+
+## 2026-04-24
+- style: fix overflow issue in long text cells
+
