@@ -410,3 +410,7 @@ Running development notes.
 ## 2026-04-25
 - fix: prevent tooltip from overflowing viewport
 
+
+## 2026-04-25
+- docs: add architecture overview section to README
+
