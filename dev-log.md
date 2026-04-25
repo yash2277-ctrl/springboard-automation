@@ -406,3 +406,7 @@ Running development notes.
 ## 2026-04-24
 - fix: resolve race condition in async data fetch
 
+
+## 2026-04-25
+- fix: prevent tooltip from overflowing viewport
+
