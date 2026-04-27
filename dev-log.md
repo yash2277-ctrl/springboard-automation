@@ -414,3 +414,7 @@ Running development notes.
 ## 2026-04-25
 - docs: add architecture overview section to README
 
+
+## 2026-04-27
+- perf: cache API responses in session storage
+
