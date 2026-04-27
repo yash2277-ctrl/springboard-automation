@@ -418,3 +418,7 @@ Running development notes.
 ## 2026-04-27
 - perf: cache API responses in session storage
 
+
+## 2026-04-27
+- feat: add accessible aria labels to icon buttons
+
