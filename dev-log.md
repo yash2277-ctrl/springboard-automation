@@ -422,3 +422,7 @@ Running development notes.
 ## 2026-04-27
 - feat: add accessible aria labels to icon buttons
 
+
+## 2026-04-27
+- chore: add pre-commit hook for linting
+
