@@ -426,3 +426,7 @@ Running development notes.
 ## 2026-04-27
 - chore: add pre-commit hook for linting
 
+
+## 2026-04-28
+- feat: implement pagination in API responses
+
