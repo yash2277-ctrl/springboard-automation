@@ -430,3 +430,7 @@ Running development notes.
 ## 2026-04-28
 - feat: implement pagination in API responses
 
+
+## 2026-04-29
+- fix: handle empty array before calling map
+
