@@ -442,3 +442,7 @@ Running development notes.
 ## 2026-04-30
 - fix: correct route guard redirect logic
 
+
+## 2026-04-30
+- feat: display relative timestamps
+
