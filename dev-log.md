@@ -434,3 +434,7 @@ Running development notes.
 ## 2026-04-29
 - fix: handle empty array before calling map
 
+
+## 2026-04-30
+- fix: repair broken mobile navigation menu
+
