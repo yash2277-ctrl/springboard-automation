@@ -438,3 +438,7 @@ Running development notes.
 ## 2026-04-30
 - fix: repair broken mobile navigation menu
 
+
+## 2026-04-30
+- fix: correct route guard redirect logic
+
