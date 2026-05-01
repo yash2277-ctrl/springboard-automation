@@ -446,3 +446,7 @@ Running development notes.
 ## 2026-04-30
 - feat: display relative timestamps
 
+
+## 2026-05-01
+- perf: lazy load images below the fold
+
