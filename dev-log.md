@@ -450,3 +450,7 @@ Running development notes.
 ## 2026-05-01
 - perf: lazy load images below the fold
 
+
+## 2026-05-02
+- docs: add inline comments to complex functions
+
