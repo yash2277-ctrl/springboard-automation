@@ -462,3 +462,7 @@ Running development notes.
 ## 2026-05-04
 - docs: add deployment guide for production
 
+
+## 2026-05-04
+- feat: add retry button on network error screen
+
