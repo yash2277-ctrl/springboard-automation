@@ -458,3 +458,7 @@ Running development notes.
 ## 2026-05-04
 - feat: add keyboard shortcut for quick search
 
+
+## 2026-05-04
+- docs: add deployment guide for production
+
