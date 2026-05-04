@@ -454,3 +454,7 @@ Running development notes.
 ## 2026-05-02
 - docs: add inline comments to complex functions
 
+
+## 2026-05-04
+- feat: add keyboard shortcut for quick search
+
