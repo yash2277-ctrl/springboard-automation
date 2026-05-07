@@ -466,3 +466,7 @@ Running development notes.
 ## 2026-05-04
 - feat: add retry button on network error screen
 
+
+## 2026-05-07
+- refactor: extract helper function for date formatting
+
