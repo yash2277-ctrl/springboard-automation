@@ -474,3 +474,7 @@ Running development notes.
 ## 2026-05-08
 - feat: add recent searches dropdown
 
+
+## 2026-05-08
+- feat: add multi-select for bulk actions
+
