@@ -470,3 +470,7 @@ Running development notes.
 ## 2026-05-07
 - refactor: extract helper function for date formatting
 
+
+## 2026-05-08
+- feat: add recent searches dropdown
+
