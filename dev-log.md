@@ -482,3 +482,7 @@ Running development notes.
 ## 2026-05-11
 - feat: add loading skeleton for async data
 
+
+## 2026-05-11
+- feat: implement pagination in API responses
+
