@@ -478,3 +478,7 @@ Running development notes.
 ## 2026-05-08
 - feat: add multi-select for bulk actions
 
+
+## 2026-05-11
+- feat: add loading skeleton for async data
+
