@@ -486,3 +486,7 @@ Running development notes.
 ## 2026-05-11
 - feat: implement pagination in API responses
 
+
+## 2026-05-12
+- chore: configure prettier formatting rules
+
