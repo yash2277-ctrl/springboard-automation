@@ -490,3 +490,7 @@ Running development notes.
 ## 2026-05-12
 - chore: configure prettier formatting rules
 
+
+## 2026-05-13
+- chore: add .editorconfig for consistent formatting
+
