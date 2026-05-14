@@ -494,3 +494,7 @@ Running development notes.
 ## 2026-05-13
 - chore: add .editorconfig for consistent formatting
 
+
+## 2026-05-14
+- fix: handle token expiry with automatic refresh
+
