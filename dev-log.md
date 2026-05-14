@@ -498,3 +498,7 @@ Running development notes.
 ## 2026-05-14
 - fix: handle token expiry with automatic refresh
 
+
+## 2026-05-14
+- fix: remove console.log statements from production code
+
