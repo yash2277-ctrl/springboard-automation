@@ -502,3 +502,7 @@ Running development notes.
 ## 2026-05-14
 - fix: remove console.log statements from production code
 
+
+## 2026-05-15
+- docs: update API response shape documentation
+
