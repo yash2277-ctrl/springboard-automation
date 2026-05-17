@@ -506,3 +506,7 @@ Running development notes.
 ## 2026-05-15
 - docs: update API response shape documentation
 
+
+## 2026-05-17
+- fix: resolve edge case in input validation
+
