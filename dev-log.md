@@ -514,3 +514,7 @@ Running development notes.
 ## 2026-05-18
 - refactor: replace inline styles with CSS classes
 
+
+## 2026-05-18
+- chore: update .gitignore for OS-specific files
+
