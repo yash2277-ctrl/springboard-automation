@@ -510,3 +510,7 @@ Running development notes.
 ## 2026-05-17
 - fix: resolve edge case in input validation
 
+
+## 2026-05-18
+- refactor: replace inline styles with CSS classes
+
