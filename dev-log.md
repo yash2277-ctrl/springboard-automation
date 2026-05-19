@@ -518,3 +518,7 @@ Running development notes.
 ## 2026-05-18
 - chore: update .gitignore for OS-specific files
 
+
+## 2026-05-19
+- feat: add multi-select for bulk actions
+
