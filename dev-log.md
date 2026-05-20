@@ -526,3 +526,7 @@ Running development notes.
 ## 2026-05-20
 - feat: add keyboard navigation to dropdown menus
 
+
+## 2026-05-20
+- docs: update contributing guide with code style rules
+
