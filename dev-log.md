@@ -522,3 +522,7 @@ Running development notes.
 ## 2026-05-19
 - feat: add multi-select for bulk actions
 
+
+## 2026-05-20
+- feat: add keyboard navigation to dropdown menus
+
