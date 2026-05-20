@@ -530,3 +530,7 @@ Running development notes.
 ## 2026-05-20
 - docs: update contributing guide with code style rules
 
+
+## 2026-05-20
+- docs: add screenshot to README
+
