@@ -534,3 +534,7 @@ Running development notes.
 ## 2026-05-20
 - docs: add screenshot to README
 
+
+## 2026-05-21
+- feat: add user avatar upload with preview
+
