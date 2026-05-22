@@ -538,3 +538,7 @@ Running development notes.
 ## 2026-05-21
 - feat: add user avatar upload with preview
 
+
+## 2026-05-22
+- fix: sanitize user input before display
+
