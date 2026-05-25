@@ -542,3 +542,7 @@ Running development notes.
 ## 2026-05-22
 - fix: sanitize user input before display
 
+
+## 2026-05-25
+- style: add responsive grid for card layout
+
