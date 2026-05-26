@@ -546,3 +546,7 @@ Running development notes.
 ## 2026-05-25
 - style: add responsive grid for card layout
 
+
+## 2026-05-26
+- perf: memoize expensive list rendering
+
