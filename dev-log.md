@@ -550,3 +550,7 @@ Running development notes.
 ## 2026-05-26
 - perf: memoize expensive list rendering
 
+
+## 2026-05-26
+- style: unify button hover states across pages
+
