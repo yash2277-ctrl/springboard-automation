@@ -554,3 +554,7 @@ Running development notes.
 ## 2026-05-26
 - style: unify button hover states across pages
 
+
+## 2026-05-27
+- feat: add multi-select for bulk actions
+
