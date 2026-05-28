@@ -558,3 +558,7 @@ Running development notes.
 ## 2026-05-27
 - feat: add multi-select for bulk actions
 
+
+## 2026-05-28
+- docs: clarify installation steps for Windows users
+
