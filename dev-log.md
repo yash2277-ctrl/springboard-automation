@@ -566,3 +566,7 @@ Running development notes.
 ## 2026-05-28
 - style: increase tap target size on mobile
 
+
+## 2026-06-02
+- perf: cache API responses in session storage
+
