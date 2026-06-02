@@ -570,3 +570,7 @@ Running development notes.
 ## 2026-06-02
 - perf: cache API responses in session storage
 
+
+## 2026-06-02
+- refactor: extract auth logic into custom hook
+
