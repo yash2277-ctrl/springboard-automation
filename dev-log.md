@@ -578,3 +578,7 @@ Running development notes.
 ## 2026-06-03
 - perf: cache API responses in session storage
 
+
+## 2026-06-04
+- fix: resolve infinite scroll not triggering
+
