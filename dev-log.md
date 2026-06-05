@@ -582,3 +582,7 @@ Running development notes.
 ## 2026-06-04
 - fix: resolve infinite scroll not triggering
 
+
+## 2026-06-05
+- chore: add .editorconfig for consistent formatting
+
