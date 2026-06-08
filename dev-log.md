@@ -590,3 +590,7 @@ Running development notes.
 ## 2026-06-08
 - refactor: consolidate API error handling
 
+
+## 2026-06-08
+- refactor: extract auth logic into custom hook
+
