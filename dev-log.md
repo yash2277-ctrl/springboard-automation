@@ -594,3 +594,7 @@ Running development notes.
 ## 2026-06-08
 - refactor: extract auth logic into custom hook
 
+
+## 2026-06-09
+- feat: implement local storage persistence for theme
+
