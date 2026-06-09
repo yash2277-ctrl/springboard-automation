@@ -598,3 +598,7 @@ Running development notes.
 ## 2026-06-09
 - feat: implement local storage persistence for theme
 
+
+## 2026-06-09
+- docs: add API endpoint reference table
+
