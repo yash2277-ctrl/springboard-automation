@@ -602,3 +602,7 @@ Running development notes.
 ## 2026-06-09
 - docs: add API endpoint reference table
 
+
+## 2026-06-10
+- refactor: replace inline styles with CSS classes
+
