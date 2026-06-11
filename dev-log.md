@@ -610,3 +610,7 @@ Running development notes.
 ## 2026-06-11
 - chore: remove unused imports and dead code
 
+
+## 2026-06-11
+- fix: correct sidebar collapse animation
+
