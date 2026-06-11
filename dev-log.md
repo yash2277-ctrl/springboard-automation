@@ -606,3 +606,7 @@ Running development notes.
 ## 2026-06-10
 - refactor: replace inline styles with CSS classes
 
+
+## 2026-06-11
+- chore: remove unused imports and dead code
+
