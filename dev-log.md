@@ -618,3 +618,7 @@ Running development notes.
 ## 2026-06-15
 - chore: set up GitHub Actions workflow for CI
 
+
+## 2026-06-16
+- feat: support dark mode via CSS custom properties
+
