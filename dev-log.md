@@ -622,3 +622,7 @@ Running development notes.
 ## 2026-06-16
 - feat: support dark mode via CSS custom properties
 
+
+## 2026-06-16
+- fix: handle missing env variable gracefully
+
