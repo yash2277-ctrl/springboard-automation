@@ -626,3 +626,7 @@ Running development notes.
 ## 2026-06-16
 - fix: handle missing env variable gracefully
 
+
+## 2026-06-18
+- fix: correct sidebar collapse animation
+
