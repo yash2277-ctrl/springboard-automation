@@ -630,3 +630,7 @@ Running development notes.
 ## 2026-06-18
 - fix: correct sidebar collapse animation
 
+
+## 2026-06-21
+- style: add responsive grid for card layout
+
