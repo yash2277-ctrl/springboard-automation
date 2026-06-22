@@ -634,3 +634,7 @@ Running development notes.
 ## 2026-06-21
 - style: add responsive grid for card layout
 
+
+## 2026-06-22
+- feat: add accessible aria labels to icon buttons
+
