@@ -638,3 +638,7 @@ Running development notes.
 ## 2026-06-22
 - feat: add accessible aria labels to icon buttons
 
+
+## 2026-06-24
+- fix: ensure logout clears all session data
+
