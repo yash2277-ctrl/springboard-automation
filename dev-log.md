@@ -642,3 +642,7 @@ Running development notes.
 ## 2026-06-24
 - fix: ensure logout clears all session data
 
+
+## 2026-06-25
+- style: increase contrast ratio for accessibility
+
