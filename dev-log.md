@@ -646,3 +646,7 @@ Running development notes.
 ## 2026-06-25
 - style: increase contrast ratio for accessibility
 
+
+## 2026-06-26
+- refactor: unify HTTP client configuration
+
