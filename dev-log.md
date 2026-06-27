@@ -650,3 +650,7 @@ Running development notes.
 ## 2026-06-26
 - refactor: unify HTTP client configuration
 
+
+## 2026-06-27
+- style: fix overflow issue in long text cells
+
