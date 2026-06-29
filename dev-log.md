@@ -654,3 +654,7 @@ Running development notes.
 ## 2026-06-27
 - style: fix overflow issue in long text cells
 
+
+## 2026-06-29
+- feat: add progress bar for file uploads
+
