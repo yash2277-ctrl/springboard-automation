@@ -662,3 +662,7 @@ Running development notes.
 ## 2026-06-30
 - feat: add keyboard shortcut for quick search
 
+
+## 2026-07-01
+- fix: resolve infinite scroll not triggering
+
