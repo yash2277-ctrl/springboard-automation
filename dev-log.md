@@ -666,3 +666,7 @@ Running development notes.
 ## 2026-07-01
 - fix: resolve infinite scroll not triggering
 
+
+## 2026-07-03
+- docs: update README with latest setup steps
+
