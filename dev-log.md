@@ -670,3 +670,7 @@ Running development notes.
 ## 2026-07-03
 - docs: update README with latest setup steps
 
+
+## 2026-07-04
+- style: fix inconsistent spacing in components
+
