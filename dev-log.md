@@ -682,3 +682,7 @@ Running development notes.
 ## 2026-07-04
 - style: fix inconsistent spacing in components
 
+
+## 2026-07-06
+- fix: correct off-by-one error in pagination
+
