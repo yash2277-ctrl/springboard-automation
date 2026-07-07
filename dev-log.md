@@ -686,3 +686,7 @@ Running development notes.
 ## 2026-07-06
 - fix: correct off-by-one error in pagination
 
+
+## 2026-07-07
+- refactor: unify HTTP client configuration
+
