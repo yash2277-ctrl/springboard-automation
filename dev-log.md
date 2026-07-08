@@ -690,3 +690,7 @@ Running development notes.
 ## 2026-07-07
 - refactor: unify HTTP client configuration
 
+
+## 2026-07-08
+- fix: correct form reset after successful submit
+
