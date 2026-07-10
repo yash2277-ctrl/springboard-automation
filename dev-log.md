@@ -694,3 +694,7 @@ Running development notes.
 ## 2026-07-08
 - fix: correct form reset after successful submit
 
+
+## 2026-07-10
+- feat: add confirmation dialog for destructive actions
+
