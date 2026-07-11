@@ -702,3 +702,7 @@ Running development notes.
 ## 2026-07-11
 - style: apply consistent font-size scale
 
+
+## 2026-07-11
+- refactor: replace inline styles with CSS classes
+
