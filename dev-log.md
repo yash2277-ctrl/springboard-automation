@@ -710,3 +710,7 @@ Running development notes.
 ## 2026-07-13
 - fix: correct route guard redirect logic
 
+
+## 2026-07-14
+- style: apply consistent font-size scale
+
