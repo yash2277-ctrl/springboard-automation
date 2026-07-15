@@ -718,3 +718,7 @@ Running development notes.
 ## 2026-07-15
 - feat: add progress bar for file uploads
 
+
+## 2026-07-15
+- feat: add keyboard navigation to dropdown menus
+
