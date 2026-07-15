@@ -714,3 +714,7 @@ Running development notes.
 ## 2026-07-14
 - style: apply consistent font-size scale
 
+
+## 2026-07-15
+- feat: add progress bar for file uploads
+
