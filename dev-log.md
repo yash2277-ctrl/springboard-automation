@@ -722,3 +722,7 @@ Running development notes.
 ## 2026-07-15
 - feat: add keyboard navigation to dropdown menus
 
+
+## 2026-07-16
+- fix: handle empty array before calling map
+
