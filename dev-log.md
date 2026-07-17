@@ -726,3 +726,7 @@ Running development notes.
 ## 2026-07-16
 - fix: handle empty array before calling map
 
+
+## 2026-07-17
+- refactor: replace magic numbers with named constants
+
