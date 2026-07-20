@@ -730,3 +730,7 @@ Running development notes.
 ## 2026-07-17
 - refactor: replace magic numbers with named constants
 
+
+## 2026-07-20
+- refactor: consolidate API error handling
+
