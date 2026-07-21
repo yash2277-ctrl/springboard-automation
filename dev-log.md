@@ -734,3 +734,7 @@ Running development notes.
 ## 2026-07-20
 - refactor: consolidate API error handling
 
+
+## 2026-07-21
+- fix: correct timestamp display in UTC
+
