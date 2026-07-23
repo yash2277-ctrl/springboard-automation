@@ -742,3 +742,7 @@ Running development notes.
 ## 2026-07-23
 - fix: correct form reset after successful submit
 
+
+## 2026-07-23
+- chore: upgrade node engine requirement to v20
+
