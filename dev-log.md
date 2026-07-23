@@ -746,3 +746,7 @@ Running development notes.
 ## 2026-07-23
 - chore: upgrade node engine requirement to v20
 
+
+## 2026-07-23
+- style: increase contrast ratio for accessibility
+
