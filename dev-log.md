@@ -754,3 +754,7 @@ Running development notes.
 ## 2026-07-24
 - refactor: move constants to dedicated config file
 
+
+## 2026-07-24
+- feat: add multi-select for bulk actions
+
