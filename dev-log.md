@@ -750,3 +750,7 @@ Running development notes.
 ## 2026-07-23
 - style: increase contrast ratio for accessibility
 
+
+## 2026-07-24
+- refactor: move constants to dedicated config file
+
