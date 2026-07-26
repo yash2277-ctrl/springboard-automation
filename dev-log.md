@@ -758,3 +758,7 @@ Running development notes.
 ## 2026-07-24
 - feat: add multi-select for bulk actions
 
+
+## 2026-07-26
+- fix: sanitize user input before display
+
