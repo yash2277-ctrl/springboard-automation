@@ -766,3 +766,7 @@ Running development notes.
 ## 2026-07-27
 - fix: handle null response from API gracefully
 
+
+## 2026-07-27
+- chore: remove unused imports and dead code
+
