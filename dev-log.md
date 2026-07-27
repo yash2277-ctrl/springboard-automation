@@ -762,3 +762,7 @@ Running development notes.
 ## 2026-07-26
 - fix: sanitize user input before display
 
+
+## 2026-07-27
+- fix: handle null response from API gracefully
+
