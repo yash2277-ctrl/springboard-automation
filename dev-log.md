@@ -778,3 +778,7 @@ Running development notes.
 ## 2026-07-29
 - fix: handle network timeout with user feedback
 
+
+## 2026-07-29
+- style: add responsive grid for card layout
+
