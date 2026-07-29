@@ -774,3 +774,7 @@ Running development notes.
 ## 2026-07-28
 - fix: correct sidebar collapse animation
 
+
+## 2026-07-29
+- fix: handle network timeout with user feedback
+
