@@ -782,3 +782,7 @@ Running development notes.
 ## 2026-07-29
 - style: add responsive grid for card layout
 
+
+## 2026-07-30
+- chore: clean up unused dependencies
+
