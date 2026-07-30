@@ -786,3 +786,7 @@ Running development notes.
 ## 2026-07-30
 - chore: clean up unused dependencies
 
+
+## 2026-07-30
+- docs: add screenshot to README
+
