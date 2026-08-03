@@ -790,3 +790,7 @@ Running development notes.
 ## 2026-07-30
 - docs: add screenshot to README
 
+
+## 2026-08-03
+- fix: handle network timeout with user feedback
+
