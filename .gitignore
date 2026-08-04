@@ -1,13 +1,21 @@
-# Python cache and bytecode
+# Environment Variables & Config (SENSITIVE!)
+.env
+config.json
+*credentials*.json
+
+# Python
 __pycache__/
 *.py[cod]
-
-# Virtual environments
-.venv/
 venv/
+env/
 
-# Local logs
+# Logs
 *.log
 
-# Large local media not suited for GitHub
-*.mp4
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

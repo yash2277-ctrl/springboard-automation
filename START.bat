@@ -15,6 +15,7 @@ echo.
 start "" "http://localhost:5000"
 
 :: Start the Flask server (blocks here until you close the window)
+set PYTHONIOENCODING=utf-8
 python "%~dp0app.py"
 
 pause

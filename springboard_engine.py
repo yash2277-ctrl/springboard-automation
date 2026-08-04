@@ -38,8 +38,16 @@ class SpringboardAutomation:
         self._module_count = 0
         self.VIDEO_WAIT = 10
         self.VIDEO_HEARTBEAT_WAIT = 7
-        self.SCROLL_DWELL = 5
-        self.MODULE_LOAD_WAIT = 4
+        self.SCROLL_DWELL = 1.2
+        self.MODULE_LOAD_WAIT = 2
+        self.FAST_NORMAL_PAGES = True
+        self.AGGRESSIVE_SPEED_MODE = True
+        self.NON_INTERACTIVE_RETRY_WAIT = 1.8
+        self.REFRESH_INTERVAL_SECONDS = 300
+        self.UI_CHECK_INTERVAL_SECONDS = 300
+        self._last_periodic_refresh = time.time()
+        self._last_periodic_zoiee_check = 0.0
+        self._last_periodic_popup_check = 0.0
 
     def stop(self):
         self._running = False
@@ -156,14 +164,24 @@ class SpringboardAutomation:
     # ═════════════════════════════════════════════════════════════
     #  DISMISS ZOIEE CHATBOT
     # ═════════════════════════════════════════════════════════════
-    def _dismiss_zoiee(self, page):
+    def _dismiss_zoiee(self, page, quick=False, periodic=False):
         """
         After login, the Zoiee chatbot appears as a full-page overlay.
         We need to click the minimize button (mat-icon with text 'minimize')
         or the close/X button to dismiss it.
         """
+        vis_timeout = 350 if quick else 2000
+        settle = 0.12 if quick else 0.8
+        post_escape_wait = 0.15 if quick else 1
+
+        if periodic:
+            now = time.time()
+            if now - self._last_periodic_zoiee_check < self.UI_CHECK_INTERVAL_SECONDS:
+                return False
+            self._last_periodic_zoiee_check = now
+
         self.log("Checking for Zoiee chatbot overlay...", "INFO")
-        time.sleep(1.5)
+        time.sleep(0.12 if quick else 1.5)
 
         # Strategy 1: Look for minimize button with mat-icon
         minimize_selectors = [
@@ -181,10 +199,10 @@ class SpringboardAutomation:
         for sel in minimize_selectors:
             try:
                 el = page.locator(sel).first
-                if el.is_visible(timeout=2000):
+                if el.is_visible(timeout=vis_timeout):
                     el.click()
                     self.log(f"Dismissed Zoiee chatbot using: {sel}", "OK")
-                    time.sleep(0.8)
+                    time.sleep(settle)
                     return True
             except Exception:
                 continue
@@ -192,7 +210,7 @@ class SpringboardAutomation:
         # Strategy 2: Check for the chatbot avatar (already minimized)
         try:
             avatar = page.locator('#chatbot-avatar')
-            if avatar.is_visible(timeout=2000):
+            if avatar.is_visible(timeout=vis_timeout):
                 self.log("Zoiee already minimized (avatar visible)", "OK")
                 return True
         except Exception:
@@ -201,15 +219,15 @@ class SpringboardAutomation:
         # Strategy 3: Click outside the chatbot overlay to dismiss it
         try:
             # Check if "Ask Zoiee" text is visible (chatbot is open)
-            if page.locator('text="Ask Zoiee"').is_visible(timeout=2000):
+            if page.locator('text="Ask Zoiee"').is_visible(timeout=vis_timeout):
                 self.log("Zoiee chatbot overlay detected, attempting to close...", "WARN")
                 # Try pressing Escape
                 page.keyboard.press("Escape")
-                time.sleep(1)
+                time.sleep(post_escape_wait)
                 # If still visible, try clicking the page body at top-left corner
-                if page.locator('text="Ask Zoiee"').is_visible(timeout=1000):
+                if page.locator('text="Ask Zoiee"').is_visible(timeout=vis_timeout):
                     page.mouse.click(10, 10)
-                    time.sleep(1)
+                    time.sleep(post_escape_wait)
         except Exception:
             pass
 
@@ -226,7 +244,7 @@ class SpringboardAutomation:
                 }
             """)
             self.log("Attempted JS-based chatbot dismissal", "OK")
-            time.sleep(1)
+            time.sleep(0.12 if quick else 1)
         except Exception:
             pass
 
@@ -373,7 +391,9 @@ class SpringboardAutomation:
                     // Try to click any shadow UI play buttons FIRST
                     for (const el of document.querySelectorAll('*')) {
                         if (el.shadowRoot) {
-                            const btn = el.shadowRoot.querySelector('.vjs-big-play-button, .play-button, [title=\"Play\"]');
+                            const v = el.shadowRoot.querySelector('video');
+                            if (!v) continue;
+                            const btn = el.shadowRoot.querySelector('.vjs-big-play-button, button.vjs-play-control, [title=\"Play\"], [aria-label=\"Play\"]');
                             if (btn && typeof btn.click === 'function') btn.click();
                         }
                     }
@@ -410,24 +430,34 @@ class SpringboardAutomation:
 
     def _tap_video_play_buttons(self, page):
         """Tap/click visible video play controls on main page and in frames."""
+        if self._is_explore_playground_page(page):
+            self.log("Blocked video play-tap on Explore/Playground page.", "WARN")
+            return
+
         play_selectors = [
             '.vjs-big-play-button',
             'button.vjs-play-control',
-            '.play-button',
             '.ytp-large-play-button',
             '.jw-icon-playback',
             '[title="Play"]',
             '[aria-label="Play"]',
             '[aria-label*="Play"]',
-            'button:has-text("Play")',
-            'mat-icon:has-text("play_arrow")',
-            '[class*="play"]',
+            'button[title*="Play"]',
+            'button[aria-label*="Play"]',
         ]
 
         targets = [page] + list(page.frames)
         clicked_any = False
 
         for target in targets:
+            # Only attempt play-clicks inside targets that actually contain a visible video.
+            try:
+                has_video = target.locator("video").first.is_visible(timeout=500)
+            except Exception:
+                has_video = False
+            if not has_video:
+                continue
+
             for sel in play_selectors:
                 try:
                     btn = target.locator(sel).first
@@ -441,20 +471,28 @@ class SpringboardAutomation:
             # JS fallback for custom overlays where selector-based click misses
             try:
                 did_js_click = target.evaluate("""() => {
+                    const v = document.querySelector('video');
+                    if (!v) return false;
+
+                    const container =
+                        v.closest('.video-js, .player, [class*="video"], [class*="player"], .vjs-tech') ||
+                        v.parentElement ||
+                        document;
+
                     const selectors = [
                         '.vjs-big-play-button',
+                        'button.vjs-play-control',
                         '.ytp-large-play-button',
                         '.jw-icon-playback',
                         '[aria-label="Play"]',
                         '[aria-label*="Play"]',
                         '[title="Play"]',
                         'button[title*="Play"]',
-                        '.play-button',
-                        '[class*="play"]'
+                        'button[aria-label*="Play"]'
                     ];
 
                     for (const s of selectors) {
-                        const el = document.querySelector(s);
+                        const el = container.querySelector(s) || document.querySelector(s);
                         if (el && el.offsetParent !== null) {
                             el.click();
                             el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -462,14 +500,10 @@ class SpringboardAutomation:
                         }
                     }
 
-                    const v = document.querySelector('video');
-                    if (v) {
-                        v.click();
-                        v.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-                        return true;
-                    }
+                    v.click();
+                    v.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                    return true;
 
-                    return false;
                 }""")
                 if did_js_click:
                     clicked_any = True
@@ -509,8 +543,143 @@ class SpringboardAutomation:
 
         return False
 
+    def _is_explore_playground_page(self, page):
+        """Detect when user is on global Explore/Playground listing instead of course player."""
+        url = ""
+        try:
+            url = (page.url or "").lower()
+        except Exception:
+            pass
+
+        if "/page/playground" in url:
+            return True
+
+        try:
+            body = page.inner_text("body", timeout=1500).lower()
+            if "technology playground" in body and "tryout" in body:
+                return True
+            if "bigdata testing playground" in body and "aem playground" in body:
+                return True
+        except Exception:
+            pass
+
+        return False
+
+    def _recover_from_explore_playground(self, page):
+        """Return to course player if automation gets pushed to Explore/Playground page."""
+        if not self._is_explore_playground_page(page):
+            return False
+
+        self.log("Detected Explore/Playground page during module scan. Recovering to course...", "WARN")
+
+        # Keep UI clear before navigation recovery.
+        self._dismiss_zoiee(page)
+
+        try:
+            page.go_back(wait_until="domcontentloaded", timeout=12000)
+            time.sleep(1.0)
+        except Exception:
+            pass
+
+        if self._is_explore_playground_page(page):
+            self._navigate_to_course(page)
+
+        return True
+
+    def _is_blank_viewer_shell(self, page):
+        """Detect blank dark viewer shell that sometimes appears after quiz submit."""
+        try:
+            url = (page.url or "").lower()
+        except Exception:
+            url = ""
+
+        if "/viewer/" not in url:
+            return False
+
+        # Never treat Explore/Playground as blank viewer here.
+        if self._is_explore_playground_page(page):
+            return False
+
+        try:
+            info = page.evaluate("""() => {
+                const body = document.body;
+                const text = (body && body.innerText ? body.innerText : '').trim();
+                const hasLearningContent = !!(
+                    document.querySelector('video') ||
+                    document.querySelector('.monaco-editor, .code-editor, [class*="editor"]') ||
+                    document.querySelector('mat-radio-button, input[type="radio"], [role="radiogroup"]') ||
+                    document.querySelector('button.navigation-btn-frwd, .navigation-btn-frwd')
+                );
+                const iframes = document.querySelectorAll('iframe').length;
+                return { textLen: text.length, hasLearningContent, iframes };
+            }""")
+
+            # Typical blank shell: almost no body text and no content widgets.
+            if info.get("textLen", 0) < 120 and not info.get("hasLearningContent") and info.get("iframes", 0) <= 1:
+                return True
+        except Exception:
+            pass
+
+        return False
+
+    def _recover_from_blank_viewer_shell(self, page):
+        """Recover when player lands on an empty shell after transitions/submissions."""
+        if not self._is_blank_viewer_shell(page):
+            return False
+
+        self.log("Detected blank viewer shell after transition. Recovering...", "WARN")
+
+        # Quick grace wait for late-rendered content.
+        for _ in range(4):
+            time.sleep(1.2)
+            if not self._is_blank_viewer_shell(page):
+                self.log("Viewer content appeared after short wait.", "OK")
+                return True
+
+        # Hard recovery path.
+        self._dismiss_zoiee(page)
+        self._handle_warning_and_fullscreen(page)
+
+        try:
+            page.reload(wait_until="domcontentloaded")
+            page.wait_for_load_state("networkidle", timeout=12000)
+        except Exception:
+            pass
+
+        if self._is_blank_viewer_shell(page):
+            self._navigate_to_course(page)
+
+        return True
+
+    def _periodic_self_heal_refresh(self, page):
+        """Refresh page every fixed interval to recover from silent stuck states."""
+        now = time.time()
+        if now - self._last_periodic_refresh < self.REFRESH_INTERVAL_SECONDS:
+            return False
+
+        self.log("3-minute self-heal refresh triggered.", "WARN")
+
+        try:
+            page.reload(wait_until="domcontentloaded")
+            page.wait_for_load_state("networkidle", timeout=15000)
+        except Exception:
+            # If reload fails due to transient page state, keep automation alive.
+            pass
+
+        self._last_periodic_refresh = time.time()
+        self._dismiss_zoiee(page)
+        self._handle_warning_and_fullscreen(page)
+        self._recover_from_explore_playground(page)
+        self._recover_from_blank_viewer_shell(page)
+        return True
+
     def _has_video_context(self, page):
-        """Detect if current module likely contains a video to avoid accidental skipping."""
+        """Detect real video-player context without false positives from dashboard text."""
+        if self._is_explore_playground_page(page):
+            return False
+        if self._is_blank_viewer_shell(page):
+            return False
+
         try:
             if page.locator("video").first.is_visible(timeout=700):
                 return True
@@ -524,15 +693,126 @@ class SpringboardAutomation:
             except Exception:
                 continue
 
+        player_selectors = [
+            '.vjs-big-play-button',
+            'button.vjs-play-control',
+            '.ytp-large-play-button',
+            '.jw-icon-playback',
+            '[class*="video-player"]',
+            '[class*="player-controls"]',
+            'iframe[src*="youtube" i]',
+            'iframe[src*="vimeo" i]',
+        ]
+
+        for selector in player_selectors:
+            try:
+                if page.locator(selector).first.is_visible(timeout=500):
+                    return True
+            except Exception:
+                continue
+
+        for frame in page.frames:
+            for selector in player_selectors:
+                try:
+                    if frame.locator(selector).first.is_visible(timeout=500):
+                        return True
+                except Exception:
+                    continue
+
         try:
             body = page.inner_text("body", timeout=1200).lower()
-            hints = ["video", "watch", "duration", "playback"]
+            hints = ["playback speed", "video player", "watch video", "current time"]
             if any(h in body for h in hints):
                 return True
         except Exception:
             pass
 
         return False
+
+    def _has_coding_context(self, page):
+        """Fast coding-context detection to avoid invoking coding handler on normal reading pages."""
+        if self._is_explore_playground_page(page):
+            return False
+
+        coding_markers = [
+            '.monaco-editor', '.code-editor', 'textarea.inputarea',
+            'button:has-text("Run")', 'button:has-text("Verify")',
+            'button:has-text("Compile")', 'button:has-text("Submit")',
+            'button[mattooltip="Run Code"]', 'button[mattooltip="Execute"]',
+        ]
+
+        targets = [page] + list(page.frames)
+        for target in targets:
+            for marker in coding_markers:
+                try:
+                    el = target.locator(marker).first
+                    if el.is_visible(timeout=500):
+                        return True
+                except Exception:
+                    continue
+
+        # Keep simple-coding fallback compatibility via existing text-based guard.
+        return self._is_simple_coding_context(page)
+
+    def _fast_skip_normal_page(self, page):
+        """Aggressive skip for non-interactive pages: quick touch + immediate next."""
+        self.log("Fast-skipping normal page...", "SCROLL")
+
+        # Tiny interaction so lazy-loaded shells initialize.
+        try:
+            page.wait_for_load_state("domcontentloaded", timeout=3000)
+        except Exception:
+            pass
+
+        self._handle_popups(page)
+
+        # First attempt: jump next immediately.
+        if self._click_next(page):
+            return True
+
+        # Fallback: force-complete scroll signals in main page, frames, and scrollable containers.
+        force_scroll_js = """() => {
+            const scrollAll = (doc) => {
+                try {
+                    const root = doc.scrollingElement || doc.documentElement || doc.body;
+                    if (root) root.scrollTop = root.scrollHeight;
+                } catch (e) {}
+
+                const nodes = Array.from(doc.querySelectorAll('*'));
+                for (const el of nodes) {
+                    try {
+                        const sh = el.scrollHeight || 0;
+                        const ch = el.clientHeight || 0;
+                        const overflowY = getComputedStyle(el).overflowY || '';
+                        const scrollable = sh > ch + 20 && (overflowY.includes('auto') || overflowY.includes('scroll'));
+                        if (scrollable) {
+                            el.scrollTop = sh;
+                        }
+                    } catch (e) {}
+                }
+            };
+
+            scrollAll(document);
+            return true;
+        }"""
+
+        # Main page scroll completion
+        try:
+            page.evaluate(force_scroll_js)
+        except Exception:
+            pass
+
+        # Frame scroll completion
+        for frame in page.frames:
+            try:
+                frame.evaluate(force_scroll_js)
+            except Exception:
+                continue
+
+        time.sleep(0.25)
+
+        self._handle_popups(page)
+        return self._click_next(page)
 
     # ═════════════════════════════════════════════════════════════
     #  CODING EXERCISE HANDLER (AI SOLVER)
@@ -558,6 +838,8 @@ class SpringboardAutomation:
 
         # If it's a simple coding exercise with just a Play button (old style)
         if not editor_visible:
+            if not self._is_simple_coding_context(page):
+                return False
             return self._handle_simple_coding(page)
 
         self.log("👨‍💻 Complex Coding Exercise DETECTED. Starting AI Auto-Solver...", "INFO")
@@ -735,9 +1017,37 @@ YOUR TASK:
             self.log("  Could not find Submit button.", "ERR")
             return False
 
+    def _is_simple_coding_context(self, page):
+        """Allow simple coding Play clicks only on actual coding/problem screens."""
+        if self._is_explore_playground_page(page):
+            return False
+
+        coding_hints = [
+            "coding", "problem", "function", "test case", "run code", "compile",
+            "input", "output", "python", "editor", "submit",
+        ]
+        block_hints = ["technology playground", "playground", "tryout", "bigdata testing playground", "aem playground"]
+
+        targets = [page] + list(page.frames)
+        for target in targets:
+            try:
+                body = target.inner_text("body", timeout=900).lower()
+                if any(b in body for b in block_hints):
+                    return False
+                if any(h in body for h in coding_hints):
+                    return True
+            except Exception:
+                continue
+
+        return False
+
     def _handle_simple_coding(self, page):
         """Original simple logic for exercises that just have a Play button."""
         try:
+            if not self._is_simple_coding_context(page):
+                self.log("Skipping simple coding play-click: not a coding context.", "INFO")
+                return False
+
             play_selectors = [
                 'mat-icon:has-text("play_arrow")',
                 'button mat-icon:has-text("play_arrow")',
@@ -749,11 +1059,24 @@ YOUR TASK:
             
             js_code = """() => {
                 let clicked = false;
+
+                const pageText = (document.body && document.body.innerText ? document.body.innerText : '').toLowerCase();
+                if (
+                    pageText.includes('technology playground') ||
+                    pageText.includes('playground') ||
+                    pageText.includes('tryout')
+                ) {
+                    return false;
+                }
+
                 const clickPlay = (doc) => {
                     const icons = Array.from(doc.querySelectorAll('mat-icon, i, .icon'));
                     for (const icon of icons) {
                         if (icon.innerText.includes("play_arrow") || icon.innerText.includes("play")) {
                             const btn = icon.closest('button') || icon;
+                            const card = btn.closest('article, .card, .course-card, [class*="card"]');
+                            const cardText = (card ? card.innerText : btn.innerText || '').toLowerCase();
+                            if (cardText.includes('playground') || cardText.includes('tryout')) continue;
                             btn.click();
                             clicked = true;
                             return true;
@@ -761,7 +1084,12 @@ YOUR TASK:
                     }
                     const btns = Array.from(doc.querySelectorAll('button'));
                     for (const btn of btns) {
-                        if (btn.outerHTML.toLowerCase().includes("play") && !btn.outerHTML.toLowerCase().includes("video")) {
+                        const html = btn.outerHTML.toLowerCase();
+                        const txt = (btn.innerText || '').toLowerCase();
+                        const card = btn.closest('article, .card, .course-card, [class*="card"]');
+                        const cardText = (card ? card.innerText : '').toLowerCase();
+                        if (cardText.includes('playground') || cardText.includes('tryout')) continue;
+                        if (html.includes("play") && !html.includes("video") && !txt.includes("playground") && !txt.includes("tryout")) {
                             btn.click();
                             clicked = true;
                             return true;
@@ -814,6 +1142,33 @@ YOUR TASK:
     def _handle_reading(self, page):
         self.log("Scrolling content page thoroughly...", "SCROLL")
         try:
+            if self.FAST_NORMAL_PAGES:
+                # Quick-pass mode for normal pages: enough interaction for progress,
+                # but without long dwell times.
+                for frame in page.frames:
+                    try:
+                        frame.evaluate("window.scrollTo({ top: 0, behavior: 'instant' })")
+                        time.sleep(0.15)
+                        frame.evaluate("window.scrollTo({ top: document.body.scrollHeight * 0.55, behavior: 'instant' })")
+                        time.sleep(0.2)
+                        frame.evaluate("window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' })")
+                        time.sleep(0.25)
+                    except Exception:
+                        continue
+
+                try:
+                    page.evaluate("window.scrollTo({ top: 0, behavior: 'instant' })")
+                    time.sleep(0.15)
+                    page.evaluate("window.scrollTo({ top: document.body.scrollHeight * 0.55, behavior: 'instant' })")
+                    time.sleep(0.2)
+                    page.evaluate("window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' })")
+                except Exception:
+                    pass
+
+                time.sleep(self.SCROLL_DWELL)
+                self.log("Reading page fast-pass complete ✅", "OK")
+                return True
+
             # Scroll ALL frames (content is often inside an iframe)
             for fi, frame in enumerate(page.frames):
                 try:
@@ -894,7 +1249,13 @@ YOUR TASK:
     # ═════════════════════════════════════════════════════════════
     #  POP-UP / INTERSTITIAL HANDLER
     # ═════════════════════════════════════════════════════════════
-    def _handle_popups(self, page):
+    def _handle_popups(self, page, quick=False, periodic=False):
+        if periodic:
+            now = time.time()
+            if now - self._last_periodic_popup_check < self.UI_CHECK_INTERVAL_SECONDS:
+                return
+            self._last_periodic_popup_check = now
+
         popup_texts = [
             "congratulations", "module complete", "rate this", "feedback",
             "well done", "successfully completed", "great job",
@@ -906,20 +1267,20 @@ YOUR TASK:
             '[data-dismiss="modal"]', 'mat-icon:has-text("close")',
         ]
         try:
-            page_text = page.inner_text("body", timeout=2000).lower()
+            page_text = page.inner_text("body", timeout=(450 if quick else 2000)).lower()
         except Exception:
             return
 
         for pt in popup_texts:
             if pt in page_text:
                 self.log(f"Popup detected: '{pt}'", "WARN")
-                if self._click_first(page, close_selectors):
+                if self._click_first(page, close_selectors, quick=quick):
                     self.log("Dismissed popup!", "OK")
-                    time.sleep(1)
+                    time.sleep(0.15 if quick else 1)
                     return
                 try:
                     page.keyboard.press("Escape")
-                    time.sleep(1)
+                    time.sleep(0.15 if quick else 1)
                 except Exception:
                     pass
                 return
@@ -929,46 +1290,100 @@ YOUR TASK:
         warning_texts = [
             "accessible only on fullscreen",
             "warning",
-            "switching tabs is not allowed",
+            "switching tab",
+            "operation is disabled",
+            "operation disabled",
         ]
         ok_selectors = [
-            'button:has-text("Ok")', 'button:has-text("OK")', 'button:has-text("Close")',
-            'button:has-text("Got it")', 'button:has-text("Continue")',
+            'button:has-text("Ok")', 'button:has-text("OK")',
+            'button:has-text("Okay")', 'button:has-text("Close")',
+            'button:has-text("Got it")', 'button:has-text("Block")',
+            'button:has-text("Allow")',
         ]
 
         targets = [page] + list(page.frames)
-        for target in targets:
-            try:
-                body_text = target.inner_text("body", timeout=1000).lower()
-            except Exception:
-                continue
-
-            if not any(t in body_text for t in warning_texts):
-                continue
-
-            self.log("Warning/fullscreen modal detected. Applying bypass...", "WARN")
-            for sel in ok_selectors:
+        cleared_any = False
+        
+        for _ in range(3): # Try up to 3 times for sequential modals
+            found_modal = False
+            for target in targets:
                 try:
-                    btn = target.locator(sel).first
-                    if btn.is_visible(timeout=800):
-                        btn.click()
-                        time.sleep(0.6)
-                        break
+                    body_text = target.inner_text("body", timeout=1000).lower()
                 except Exception:
                     continue
 
-            try:
-                target.evaluate("window.dispatchEvent(new Event('resize'));")
-            except Exception:
-                pass
+                if not any(t in body_text for t in warning_texts):
+                    continue
 
+                for sel in ok_selectors:
+                    try:
+                        btn = target.locator(sel).first
+                        if btn.is_visible(timeout=800):
+                            btn.click()
+                            self.log(f"Warning modal dismissed via '{sel}'", "WARN")
+                            time.sleep(1.0)
+                            found_modal = True
+                            cleared_any = True
+                            break
+                    except Exception:
+                        continue
+                        
+                if found_modal:
+                    break
+                    
+            if not found_modal:
+                break
+
+        if cleared_any:
             try:
                 page.evaluate("window.dispatchEvent(new Event('resize'));")
             except Exception:
                 pass
-
             self.log("Fullscreen listener spoofed with resize event", "OK")
-            return
+
+    def _dismiss_all_warnings(self, page):
+        """Aggressively dismiss ALL warning modals until none remain.
+        The Springboard assessment platform throws MANY sequential warnings:
+        - 'accessible only on fullscreen'
+        - 'Switching tab during the contest is not allowed'
+        These can appear 3-5+ times in sequence. We must clear them all."""
+        ok_selectors = [
+            'button:has-text("Ok")', 'button:has-text("OK")',
+            'button:has-text("Okay")', 'button:has-text("Close")',
+            'button:has-text("Got it")', 'button:has-text("Block")',
+            'button:has-text("Allow")',
+        ]
+        
+        targets = [page] + list(page.frames)
+        total_dismissed = 0
+        
+        for attempt in range(10):  # Up to 10 sequential warnings
+            found = False
+            for target in targets:
+                for sel in ok_selectors:
+                    try:
+                        btn = target.locator(sel).first
+                        if btn.is_visible(timeout=1500):
+                            btn.click()
+                            total_dismissed += 1
+                            self.log(f"Dismissed warning #{total_dismissed}", "WARN")
+                            time.sleep(1.0)
+                            found = True
+                            break
+                    except Exception:
+                        continue
+                if found:
+                    break
+            if not found:
+                break
+        
+        if total_dismissed > 0:
+            # Spoof fullscreen to prevent more warnings
+            try:
+                page.evaluate("window.dispatchEvent(new Event('resize'));")
+            except Exception:
+                pass
+            self.log(f"Cleared {total_dismissed} warning modals total", "OK")
 
     # ═════════════════════════════════════════════════════════════
     #  ASSESSMENT DETECTION
@@ -976,6 +1391,9 @@ YOUR TASK:
     def _is_assessment(self, page):
         """Check if the current page is an assessment/quiz section.
         Checks main page AND all iframes for quiz indicators."""
+        if self._is_explore_playground_page(page):
+            return False
+
         assessment_keywords = ["assessment", "quiz", "exam", "test"]
         strong_assessment_text = ["submit assessment", "save & next", "save and next", "take assessment", "start assessment", "finish test"]
 
@@ -1068,41 +1486,112 @@ YOUR TASK:
     # ═════════════════════════════════════════════════════════════
     def _handle_assessment(self, page):
         """
-        Complete assessment flow:
-        1. Check "I am not a robot" checkbox
-        2. Click "START" button
-        3. Accept instructions popup (checkbox + Continue)
-        4. Answer all MCQ questions (select first option + Save & Next)
-        5. Submit Assessment
+        Complete assessment flow discovered via MCP browser walkthrough:
+        The assessment UI is inside a CROSS-ORIGIN IFRAME.
+        We must use frame_locator or iterate page.frames with proper waits.
+        
+        Flow: Zoiee -> warnings -> (instructions with SECTIONS tab) -> Attempt Section -> quiz
         """
-        self.log("🧠 ASSESSMENT DETECTED — starting auto-completion...", "QUIZ")
+        self.log("ASSESSMENT DETECTED -- starting auto-completion...", "QUIZ")
         time.sleep(0.8)
 
-        # Pre-handle fullscreen/accessibility warning modal if it appears
-        self._handle_warning_and_fullscreen(page)
+        if self._recover_from_explore_playground(page):
+            self.log("Recovered from Explore/Playground during assessment flow; retrying module.", "WARN")
+            return False
 
-        # ── DOM Exploration: Log what we see ──────────────────────
-        self._explore_quiz_dom(page)
+        # Dismiss Zoiee chatbot if it covers the screen
+        self._dismiss_zoiee(page, quick=True)
+
+        # ── Aggressively dismiss ALL warning modals ──────────────
+        self._dismiss_all_warnings(page)
+
+        # ── Wait for the assessment iframe to load ───────────────
+        self.log("Waiting for assessment iframe to load...", "INFO")
+        time.sleep(5.0)
+        
+        # Log all frames for debugging
+        for i, frame in enumerate(page.frames):
+            try:
+                self.log(f"  Frame #{i}: {frame.url[:80]}", "INFO")
+            except Exception:
+                self.log(f"  Frame #{i}: (error reading URL)", "WARN")
+
+        # ── Build targets list (all frames + main page) ──────────
+        def get_all_targets():
+            return [page] + list(page.frames)
 
         # ── Step 1: "I am not a robot" checkbox ──────────────────
         self._handle_robot_checkbox(page)
 
-        # ── Step 2: Click START button ───────────────────────────
-        start_selectors = [
-            'button:has-text("START")', 'button:has-text("Start")',
-            'button:has-text("Begin")', 'button:has-text("Take Assessment")',
-        ]
-        for target in [page] + list(page.frames):
-            if self._click_first_target(target, start_selectors):
-                self.log("Clicked START assessment ✓", "OK")
-                time.sleep(1.5)
+        # ── Step 2: Click START button (if present) ──────────────
+        start_clicked = False
+        for target in get_all_targets():
+            if self._click_first_target(target, [
+                'button:has-text("START")', 'button:has-text("Start")',
+                'button:has-text("Begin")', 'button:has-text("Take Assessment")',
+            ]):
+                self.log("Clicked START assessment", "OK")
+                time.sleep(2.0)
+                start_clicked = True
                 break
-        else:
-            self.log("No START button — may already be in questions", "WARN")
+        if not start_clicked:
+            self.log("No START button -- proceeding to SECTIONS", "WARN")
 
-        # ── Step 3: Instructions popup (checkbox + Continue) ─────
+        self._dismiss_all_warnings(page)
+
+        # ── Step 3: Handle instructions + Continue ───────────────
         self._handle_instructions_popup(page)
-        self._handle_warning_and_fullscreen(page)
+        self._dismiss_all_warnings(page)
+        
+        for target in get_all_targets():
+            if self._click_first_target(target, ['button:has-text("Continue")', 'button:has-text("CONTINUE")']):
+                self.log("Clicked Continue on instructions", "OK")
+                time.sleep(2.0)
+                break
+        self._dismiss_all_warnings(page)
+
+        # ── Step 4: Click SECTIONS tab ───────────────────────────
+        for target in get_all_targets():
+            if self._click_first_target(target, [
+                'text="SECTIONS"', '.mat-tab-label:has-text("SECTIONS")',
+                'a:has-text("SECTIONS")', '[role="tab"]:has-text("SECTIONS")',
+            ]):
+                self.log("Clicked SECTIONS tab", "OK")
+                time.sleep(2.0)
+                break
+        self._dismiss_all_warnings(page)
+
+        # ── Step 5: Click Attempt Section ────────────────────────
+        attempt_clicked = False
+        for target in get_all_targets():
+            if self._click_first_target(target, [
+                'button:has-text("Attempt Section")',
+                'a:has-text("Attempt Section")',
+            ]):
+                self.log("Clicked Attempt Section!", "OK")
+                time.sleep(4.0)
+                attempt_clicked = True
+                break
+        if not attempt_clicked:
+            self.log("No Attempt Section button found -- trying frame_locator", "WARN")
+            # Fallback: use frame_locator to reach inside nested iframes
+            try:
+                fl = page.frame_locator('iframe').first
+                attempt_btn = fl.locator('button:has-text("Attempt Section")')
+                if attempt_btn.is_visible(timeout=3000):
+                    attempt_btn.click()
+                    self.log("Clicked Attempt Section via frame_locator!", "OK")
+                    time.sleep(4.0)
+                    attempt_clicked = True
+            except Exception as e:
+                self.log(f"frame_locator fallback failed: {e}", "WARN")
+
+        # Dismiss final round of warnings after Attempt Section
+        self._dismiss_all_warnings(page)
+        
+        # Wait for quiz questions to load inside the iframe
+        self.log("Waiting for quiz questions to load...", "INFO")
+        time.sleep(3.0)
 
         # ── Step 4: Answer all MCQ questions ─────────────────────
         try:
@@ -1119,6 +1608,14 @@ YOUR TASK:
         consecutive_failures = 0
 
         while self._running and question_count < max_questions:
+            if self._periodic_self_heal_refresh(page):
+                self.log("Periodic refresh happened during quiz; retrying quiz flow.", "WARN")
+                return False
+
+            if self._recover_from_explore_playground(page):
+                self.log("Redirect detected mid-quiz; returning to course player.", "WARN")
+                return False
+
             question_count += 1
             self.log(f"📝 Question #{question_count}...", "QUIZ")
 
@@ -1171,6 +1668,10 @@ YOUR TASK:
         # Handle result popups and score screens
         time.sleep(2.0)
         self._handle_popups(page)
+
+        if self._recover_from_blank_viewer_shell(page):
+            self.log("Recovered from blank viewer after assessment submit.", "WARN")
+            return False
 
         # Try to dismiss any result/score overlay
         result_dismiss = [
@@ -1269,10 +1770,6 @@ YOUR TASK:
         return False
 
     def _answer_quiz_question(self, page):
-        """Answer the current quiz question by selecting the first option.
-        Checks main page and all iframes. Uses robust click dispatching."""
-
-    def _answer_quiz_question(self, page):
         """Answer the current quiz question by using G4F AI.
         Checks main page and all iframes."""
 
@@ -1282,7 +1779,7 @@ YOUR TASK:
             
             // Strategy 1: Find radio groups
             const groups = Array.from(document.querySelectorAll(
-                'mat-radio-group, fieldset, [role="radiogroup"], .question-container, .quiz-question'
+                'mat-radio-group, fieldset, [role="radiogroup"], .question-container, .quiz-question, .mcq-container'
             ));
 
             if (groups.length > 0) {
@@ -1290,7 +1787,7 @@ YOUR TASK:
                     const hasChecked = g.querySelector('.mat-radio-checked, input:checked, [aria-checked="true"]');
                     if (!hasChecked) {
                         const opts = Array.from(g.querySelectorAll(
-                            'mat-radio-button, input[type="radio"], label.option, .quiz-option, [role="radio"]'
+                            'mat-radio-button, input[type="radio"], label.option, .quiz-option, [role="radio"], .mat-radio-label'
                         )).filter(el => el.offsetParent !== null);
                         
                         if (opts.length > 0) {
@@ -1299,7 +1796,7 @@ YOUR TASK:
                             const prevSib = g.previousElementSibling;
                             if (prevSib) qText = extractText(prevSib);
                             if (!qText && g.parentElement) {
-                                const header = g.parentElement.querySelector('h1, h2, h3, h4, .question-text, p');
+                                const header = g.parentElement.querySelector('h1, h2, h3, h4, .question-text, p, .text-content');
                                 if (header) qText = extractText(header);
                             }
                             
@@ -1310,34 +1807,33 @@ YOUR TASK:
                 }
             }
 
-            // Strategy 2: Find all ungrouped radio buttons and group by name
+            // Strategy 2: Find all ungrouped radio buttons
             const allRadios = Array.from(document.querySelectorAll(
-                'mat-radio-button, input[type="radio"], [role="radio"]'
+                'mat-radio-button, input[type="radio"], [role="radio"], .mat-radio-label'
             )).filter(el => el.offsetParent !== null);
 
-            const groupsByName = {};
-            allRadios.forEach(r => {
-                const name = r.getAttribute('name') || r.getAttribute('ng-reflect-name') || r.getAttribute('ng-reflect-value') || 'default';
-                if (!groupsByName[name]) groupsByName[name] = [];
-                groupsByName[name].push(r);
-            });
-
-            for (const name in groupsByName) {
-                const opts = groupsByName[name];
-                const hasChecked = opts.some(o =>
-                    (o.classList && (o.classList.contains('mat-radio-checked') || o.classList.contains('cdk-focused'))) ||
-                    o.checked || o.getAttribute('aria-checked') === 'true'
-                );
-                if (!hasChecked && opts.length > 0) {
-                    let qText = '';
-                    const parent = opts[0].closest('.question, .mcq-container, div');
-                    if (parent) {
-                         const header = parent.querySelector('h1, h2, h3, h4, .question-text, p');
-                         if (header) qText = extractText(header);
-                    }
-                    const optionsList = opts.map(o => extractText(o) || o.value || o.id || 'Option');
-                    return { question: qText, options: optionsList, method: 'ungrouped', name: name };
-                }
+            if (allRadios.length > 0) {
+                 const firstUnchecked = allRadios.find(r => {
+                     const isChecked = (r.classList && (r.classList.contains('mat-radio-checked') || r.classList.contains('cdk-focused'))) ||
+                                       r.checked || r.getAttribute('aria-checked') === 'true';
+                     return !isChecked;
+                 });
+                 
+                 if (firstUnchecked) {
+                     const parent = firstUnchecked.closest('.question, .mcq-container, div, section');
+                     let qText = '';
+                     if (parent) {
+                          const header = parent.querySelector('h1, h2, h3, h4, .question-text, p, .text-content');
+                          if (header) qText = extractText(header);
+                     }
+                     
+                     // Group buttons that belong to the same logical group
+                     const name = firstUnchecked.getAttribute('name') || firstUnchecked.getAttribute('ng-reflect-name') || 'default';
+                     const opts = allRadios.filter(r => (r.getAttribute('name') || r.getAttribute('ng-reflect-name') || 'default') === name);
+                     
+                     const optionsList = opts.map(o => extractText(o) || o.value || o.id || 'Option');
+                     return { question: qText, options: optionsList, method: 'ungrouped', name: name };
+                 }
             }
 
             return null;
@@ -1457,8 +1953,9 @@ YOUR TASK:
         """Click 'Save & Next' button on main page or iframes."""
         save_next_selectors = [
             'button:has-text("Save & Next")', 'button:has-text("Save and Next")',
-            'button:has-text("SAVE & NEXT")', 'button:has-text("Next")',
+            'button:has-text("SAVE & NEXT")',
             'a:has-text("Save & Next")',
+            'button:has-text("Save")',
         ]
         targets = [page] + list(page.frames)
         for target in targets:
@@ -1528,7 +2025,12 @@ YOUR TASK:
         self.log("Submitting assessment...", "QUIZ")
         time.sleep(0.8)
 
+        if self._recover_from_explore_playground(page):
+            self.log("Redirected to Explore/Playground before submit; retrying module.", "WARN")
+            return
+
         submit_selectors = [
+            'button:has-text("Finish Test")', 'button:has-text("FINISH TEST")',
             'button:has-text("Submit Assessment")', 'button:has-text("SUBMIT ASSESSMENT")',
             'button:has-text("Submit")', 'button:has-text("SUBMIT")',
             'button:has-text("Finish")',
@@ -1548,6 +2050,10 @@ YOUR TASK:
 
         # If submit is not visible yet, keep advancing until final page appears.
         for _ in range(12):
+            if self._recover_from_explore_playground(page):
+                self.log("Redirected to Explore/Playground while reaching submit step.", "WARN")
+                return
+
             has_submit = False
             for target in targets:
                 for sel in submit_selectors:
@@ -1578,18 +2084,33 @@ YOUR TASK:
                 break
 
         if submitted:
-            # Handle confirmation dialogs (may appear multiple times)
+            # Strict flow: click only explicit confirm actions after the single Submit click.
             confirm_selectors = [
-                'button:has-text("Yes")', 'button:has-text("Confirm")',
-                'button:has-text("OK")', 'button:has-text("Submit")',
-                'button:has-text("Yes, Submit")', 'button:has-text("YES")',
+                'button:has-text("Yes")',
+                'button:has-text("YES")',
+                'button:has-text("Yes, Submit")',
+                'button:has-text("Confirm")',
+                'button:has-text("Proceed")',
             ]
-            for _ in range(3):  # Try up to 3 confirmation clicks
-                time.sleep(1.0)
+
+            confirmed = False
+            for _ in range(6):
+                if self._recover_from_explore_playground(page):
+                    self.log("Redirected to Explore/Playground at confirm step; retrying module.", "WARN")
+                    return
+
                 for target in targets:
                     if self._click_first_target(target, confirm_selectors):
-                        self.log("Clicked confirmation ✓", "OK")
+                        self.log("Clicked 'Yes' confirmation ✓", "OK")
+                        confirmed = True
                         break
+
+                if confirmed:
+                    break
+                time.sleep(0.8)
+
+            if not confirmed:
+                self.log("No explicit 'Yes' confirmation found (may have auto-confirmed).", "WARN")
 
             # Post-submit: often there is a score/result screen requiring one more action.
             result_continue = [
@@ -1597,10 +2118,11 @@ YOUR TASK:
                 'button:has-text("Back to Course")',
                 'button:has-text("Done")',
                 'button:has-text("Close")',
+                'button:has-text("Go to Course")',
                 'a:has-text("Back to Course")',
             ]
-            for _ in range(4):
-                time.sleep(1.0)
+            for _ in range(8):
+                time.sleep(0.9)
                 clicked_any = False
                 for target in targets:
                     if self._click_first_target(target, result_continue):
@@ -1621,6 +2143,8 @@ YOUR TASK:
                 for i in range(count):
                     btn = locator.nth(i)
                     if btn.is_visible(timeout=1200) and btn.is_enabled(timeout=800):
+                        if self._is_blocked_click_target(btn):
+                            continue
                         btn.click()
                         return True
             except Exception:
@@ -1669,6 +2193,10 @@ YOUR TASK:
         """Wait for sidebar completion update; refresh/retry if stuck too long."""
         start = time.time()
         while time.time() - start < wait_seconds:
+            if self._periodic_self_heal_refresh(page):
+                return False
+            if self._recover_from_blank_viewer_shell(page):
+                return False
             if self._current_sidebar_item_completed(page):
                 return True
             time.sleep(1.0)
@@ -1708,6 +2236,8 @@ YOUR TASK:
             try:
                 btn = page.locator(sel).first
                 if btn.is_visible(timeout=1500) and btn.is_enabled(timeout=1000):
+                    if self._is_blocked_click_target(btn):
+                        continue
                     container_ok = btn.locator("xpath=ancestor::*[contains(@class,'navigation') or contains(@class,'player') or contains(@class,'content')] ").count() > 0
                     if container_ok or sel in ('.navigation-btn-frwd', 'button.navigation-btn-frwd', 'button:has(mat-icon:has-text("arrow_forward_ios"))'):
                         btn.click()
@@ -1746,11 +2276,50 @@ YOUR TASK:
                 continue
         return None
 
-    def _click_first(self, page, selectors):
+    def _is_blocked_click_target(self, el):
+        """Block accidental clicks on side-nav/app-shell controls (e.g., code icon / playground shortcuts)."""
+        try:
+            return bool(el.evaluate("""(node) => {
+                if (!node) return false;
+
+                const text = (node.innerText || '').toLowerCase();
+                const aria = (node.getAttribute('aria-label') || '').toLowerCase();
+                const title = (node.getAttribute('title') || '').toLowerCase();
+                const cls = (node.className || '').toString().toLowerCase();
+                const icon = (node.querySelector('mat-icon')?.innerText || '').toLowerCase();
+                const combined = `${text} ${aria} ${title} ${cls} ${icon}`;
+
+                const blockedWords = [
+                    'playground', 'tryout', 'explore', 'catalog', 'code', 'programming'
+                ];
+
+                if (blockedWords.some(w => combined.includes(w))) return true;
+
+                // Avoid common side navigation rails and app-shell icon strips.
+                const blockedAncestor = node.closest(
+                    'aside, nav, [role="navigation"], .side-nav, .sidenav, .left-nav, ' +
+                    '.left-menu, .menu-rail, .app-shell, .app-sidebar, .quick-links, .global-nav'
+                );
+                if (blockedAncestor) return true;
+
+                // Block icon-only code toggles represented as < > chevrons.
+                const hasChevronGlyph = /[<>‹›«»]/.test(node.innerText || '');
+                if (hasChevronGlyph && !(combined.includes('next') || combined.includes('continue'))) return true;
+
+                return false;
+            }"""))
+        except Exception:
+            return False
+
+    def _click_first(self, page, selectors, quick=False):
+        vis_timeout = 320 if quick else 1500
+        enabled_timeout = 220 if quick else 1000
         for sel in selectors:
             try:
                 btn = page.locator(sel).first
-                if btn.is_visible(timeout=1500) and btn.is_enabled(timeout=1000):
+                if btn.is_visible(timeout=vis_timeout) and btn.is_enabled(timeout=enabled_timeout):
+                    if self._is_blocked_click_target(btn):
+                        continue
                     btn.click()
                     return True
             except Exception:
@@ -1762,6 +2331,8 @@ YOUR TASK:
             try:
                 btn = frame.locator(sel).first
                 if btn.is_visible(timeout=1500):
+                    if self._is_blocked_click_target(btn):
+                        continue
                     btn.click()
                     return True
             except Exception:
@@ -1780,11 +2351,13 @@ YOUR TASK:
                     "--disable-blink-features=AutomationControlled",
                     "--no-sandbox",
                     "--start-maximized",
+                    "--disable-notifications",
+                    "--disable-popup-blocking",
                 ],
             )
             context_kwargs = {
                 "viewport": {"width": 1366, "height": 768},
-                "permissions": ["window-placement"],
+                "permissions": ["clipboard-read", "clipboard-write"],
                 "user_agent": (
                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                     "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -1792,13 +2365,13 @@ YOUR TASK:
                 ),
             }
 
-            # Some Playwright/browser builds do not support window-placement permission.
+            # Some Playwright/browser builds do not support certain permissions.
             # Fall back gracefully instead of crashing the whole run.
             try:
                 context = browser.new_context(**context_kwargs)
             except Exception as e:
-                if "Unknown permission" in str(e) and "window-placement" in str(e):
-                    self.log("window-placement permission unsupported; continuing without it.", "WARN")
+                if "Unknown permission" in str(e):
+                    self.log(f"Permission unsupported ({e}); continuing without permissions.", "WARN")
                     context_kwargs.pop("permissions", None)
                     context = browser.new_context(**context_kwargs)
                 else:
@@ -1813,6 +2386,21 @@ YOUR TASK:
             """)
 
             page = context.new_page()
+            
+            # Auto-accept any browser alerts/dialogs
+            page.on("dialog", lambda dialog: {
+                self.log(f"Auto-accepting dialog: {dialog.message}", "WARN"),
+                dialog.accept()
+            })
+
+            # Grant permissions explicitly for the assessment domains to prevent the "wants to" popups
+            try:
+                context.grant_permissions(["clipboard-read", "clipboard-write"], origin="https://infyspringboard.onwingspan.com")
+                context.grant_permissions(["clipboard-read", "clipboard-write"], origin="https://lex-iap.infosysapps.com")
+                self.log("Clipboard permissions granted to assessment origins.", "OK")
+            except Exception:
+                pass
+
 
             try:
                 # 1. Login
@@ -1824,69 +2412,122 @@ YOUR TASK:
                 # 3. Navigate to course
                 self._navigate_to_course(page)
 
-                # 4. Auto-player loop
-                self.log("🎯 Course auto-player started!", "OK")
+                # 4. Jump straight to final assessment
+                self.log("⏩ Skipping straight to the final assessment...", "INFO")
+                # Give UI a moment to render the sidebar
+                time.sleep(4.0)
+
+                # Force open TOC if hidden
+                try:
+                    # The Contents tab uses the 'web' icon, NOT 'menu_book' (which is Details)
+                    toc_btn = page.locator('mat-icon:has-text("web"), .mat-tab-label:has-text("Contents")').first
+                    if toc_btn.is_visible(timeout=3000):
+                        toc_btn.click()
+                        time.sleep(2.0)
+                except Exception:
+                    pass
+
+                # Find and click the final module
+                try:
+                    self.log("Searching for Assessment in the sidebar...", "INFO")
+                    
+                    # Try to click by text first
+                    clicked = False
+                    for kw in ["Assessment", "Quiz", "Test", "Exam"]:
+                        try:
+                            # Look specifically inside the side navigation/tree area
+                            node = page.locator(f'mat-tree-node:has-text("{kw}"), [role="treeitem"]:has-text("{kw}"), div.mat-tab-body-content:has-text("{kw}") >> text="{kw}"').last
+                            if node.is_visible(timeout=2000):
+                                node.click()
+                                self.log(f"Clicked '{kw}' in the TOC!", "OK")
+                                clicked = True
+                                break
+                        except Exception:
+                            continue
+                            
+                    if not clicked:
+                        # Fallback to the last tree node
+                        try:
+                            last_node = page.locator('mat-tree-node, [role="treeitem"]').last
+                            if last_node.is_visible(timeout=2000):
+                                last_node.click()
+                                self.log("Clicked the last item in the TOC as a fallback.", "OK")
+                                clicked = True
+                        except Exception:
+                            pass
+                            
+                    if clicked:
+                        time.sleep(4.0)
+                        try:
+                            page.wait_for_load_state("networkidle", timeout=10000)
+                        except Exception:
+                            pass
+                    else:
+                        self.log("Could not jump via TOC locators, proceeding standard loop.", "WARN")
+                except Exception as e:
+                    self.log(f"Could not jump via TOC: {e}", "WARN")
+
+                # 5. Auto-player loop (will now only process the assessment and exit)
+                self.log("🎯 Assessment auto-player started!", "OK")
 
                 while self._running:
                     self._module_count += 1
                     self.log(f"━━━ Module #{self._module_count} ━━━", "INFO")
 
-                    try:
-                        page.wait_for_load_state("networkidle", timeout=10000)
-                    except PlaywrightTimeout:
-                        pass
-                    time.sleep(0.8)
-
-                    # Dismiss Zoiee if it reappears
-                    self._dismiss_zoiee(page)
-                    self._handle_warning_and_fullscreen(page)
-
-                    # Prioritize video handling first to avoid false quiz detection on player pages.
-                    if self._has_video_context(page):
-                        if self._handle_video(page):
-                            if not self._wait_for_completion_or_recover(page, wait_seconds=20):
-                                continue
-                            self._handle_popups(page)
-                            if not self._click_next(page):
-                                self.log("No Next after video", "WARN")
-                            continue
-                        self.log("Video context detected but not completed yet; retrying this module.", "WARN")
-                        time.sleep(2.0)
+                    if self._periodic_self_heal_refresh(page):
+                        time.sleep(0.3)
                         continue
 
-                    # Check for assessment
+                    try:
+                        page.wait_for_load_state("networkidle", timeout=5000)
+                    except PlaywrightTimeout:
+                        pass
+                    time.sleep(0.25)
+
+                    # Dismiss Zoiee if it reappears
+                    self._dismiss_zoiee(page, quick=True, periodic=True)
+                    self._handle_warning_and_fullscreen(page)
+
+                    # If redirected to Explore/Playground, immediately return to the course player.
+                    if self._recover_from_explore_playground(page):
+                        time.sleep(0.4)
+                        continue
+
+                    # Recover if player is stuck on a blank shell after transitions.
+                    if self._recover_from_blank_viewer_shell(page):
+                        time.sleep(0.4)
+                        continue
+
+                    # Check for assessment (The main task we are here for)
                     if self._is_assessment(page):
-                        self._handle_assessment(page)
+                        if not self._handle_assessment(page):
+                            time.sleep(0.8)
+                            continue
                         if not self._wait_for_completion_or_recover(page, wait_seconds=20):
                             continue
                         self._handle_popups(page)
-                        time.sleep(0.8)
+                        time.sleep(0.4)
                         if not self._click_next(page):
                             self.log("No Next after assessment", "WARN")
                         continue
 
                     # Handle popups
-                    self._handle_popups(page)
+                    self._handle_popups(page, quick=True, periodic=True)
 
-                    # Try coding (always click play if it's there)
-                    self._handle_coding(page)
-
-                    # Try reading/scrolling
-                    self._handle_reading(page)
-                    self._handle_popups(page)
-
-                    # Move to next module
+                    # If not an assessment, just forcefully skip to the next module
+                    self.log("⏩ Not an assessment, skipping module...", "INFO")
                     if not self._click_next(page):
-                        self.log("No Next button — retrying in 5s...", "WARN")
-                        time.sleep(5)
-                        self._handle_popups(page)
-                        self._dismiss_zoiee(page)
+                        retry_wait = self.NON_INTERACTIVE_RETRY_WAIT if self.AGGRESSIVE_SPEED_MODE else 5
+                        self.log(f"No Next button — retrying in {retry_wait:.1f}s...", "WARN")
+                        time.sleep(retry_wait)
+                        self._handle_popups(page, quick=True, periodic=True)
+                        self._dismiss_zoiee(page, quick=True, periodic=True)
                         if not self._click_next(page):
                             self.log(f"✅ Course appears complete! Modules: {self._module_count}", "OK")
                             break
 
                     try:
-                        page.wait_for_load_state("networkidle", timeout=10000)
+                        page.wait_for_load_state("networkidle", timeout=5000)
                     except PlaywrightTimeout:
                         pass
 
