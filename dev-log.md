@@ -794,3 +794,7 @@ Running development notes.
 ## 2026-08-03
 - fix: handle network timeout with user feedback
 
+
+## 2026-08-04
+- refactor: replace inline styles with CSS classes
+
