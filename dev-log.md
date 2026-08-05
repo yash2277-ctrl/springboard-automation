@@ -802,3 +802,7 @@ Running development notes.
 ## 2026-08-05
 - perf: memoize expensive list rendering
 
+
+## 2026-08-05
+- chore: add .editorconfig for consistent formatting
+
