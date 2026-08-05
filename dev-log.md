@@ -798,3 +798,7 @@ Running development notes.
 ## 2026-08-04
 - refactor: replace inline styles with CSS classes
 
+
+## 2026-08-05
+- perf: memoize expensive list rendering
+
