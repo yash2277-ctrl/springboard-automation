@@ -6,3 +6,4 @@
 - 2026-08-05 19:49 — sync scheduler.
 - 2026-08-06 12:38 — rotate logs.
 - 2026-08-06 19:30 — rotate logs.
+- 2026-08-06 21:10 — fix stale handle.
