@@ -7,3 +7,4 @@
 - 2026-08-06 12:38 — rotate logs.
 - 2026-08-06 19:30 — rotate logs.
 - 2026-08-06 21:10 — fix stale handle.
+- 2026-08-07 17:55 — fix stale handle.
