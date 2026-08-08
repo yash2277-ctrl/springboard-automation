@@ -810,3 +810,7 @@ Running development notes.
 ## 2026-08-07
 - refactor: simplify conditional rendering logic
 
+
+## 2026-08-08
+- refactor: simplify conditional rendering logic
+
