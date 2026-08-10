@@ -814,3 +814,7 @@ Running development notes.
 ## 2026-08-08
 - refactor: simplify conditional rendering logic
 
+
+## 2026-08-10
+- chore: add .editorconfig for consistent formatting
+
