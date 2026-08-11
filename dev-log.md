@@ -818,3 +818,7 @@ Running development notes.
 ## 2026-08-10
 - chore: add .editorconfig for consistent formatting
 
+
+## 2026-08-11
+- perf: lazy load images below the fold
+
