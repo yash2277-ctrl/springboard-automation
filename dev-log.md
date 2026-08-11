@@ -826,3 +826,7 @@ Running development notes.
 ## 2026-08-11
 - style: add responsive grid for card layout
 
+
+## 2026-08-11
+- fix: handle token expiry with automatic refresh
+
