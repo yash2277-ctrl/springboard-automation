@@ -830,3 +830,7 @@ Running development notes.
 ## 2026-08-11
 - fix: handle token expiry with automatic refresh
 
+
+## 2026-08-12
+- refactor: extract auth logic into custom hook
+
