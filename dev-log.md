@@ -838,3 +838,7 @@ Running development notes.
 ## 2026-08-14
 - fix: correct off-by-one error in pagination
 
+
+## 2026-08-14
+- perf: avoid unnecessary re-renders with useCallback
+
