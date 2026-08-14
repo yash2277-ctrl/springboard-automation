@@ -842,3 +842,7 @@ Running development notes.
 ## 2026-08-14
 - perf: avoid unnecessary re-renders with useCallback
 
+
+## 2026-08-14
+- refactor: move constants to dedicated config file
+
