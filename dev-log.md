@@ -834,3 +834,7 @@ Running development notes.
 ## 2026-08-12
 - refactor: extract auth logic into custom hook
 
+
+## 2026-08-14
+- fix: correct off-by-one error in pagination
+
