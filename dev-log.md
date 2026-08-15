@@ -850,3 +850,7 @@ Running development notes.
 ## 2026-08-15
 - fix: resolve race condition in async data fetch
 
+
+## 2026-08-15
+- fix: handle missing env variable gracefully
+
