@@ -854,3 +854,7 @@ Running development notes.
 ## 2026-08-15
 - fix: handle missing env variable gracefully
 
+
+## 2026-08-16
+- fix: handle network timeout with user feedback
+
