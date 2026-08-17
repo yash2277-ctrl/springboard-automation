@@ -858,3 +858,7 @@ Running development notes.
 ## 2026-08-16
 - fix: handle network timeout with user feedback
 
+
+## 2026-08-17
+- chore: update .gitignore for OS-specific files
+
