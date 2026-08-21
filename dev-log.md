@@ -870,3 +870,7 @@ Running development notes.
 ## 2026-08-19
 - docs: clarify installation steps for Windows users
 
+
+## 2026-08-21
+- fix: resolve race condition in async data fetch
+
