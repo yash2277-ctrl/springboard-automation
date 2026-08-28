@@ -28,3 +28,4 @@
 - 2026-08-25 16:46 — adjust timing.
 - 2026-08-27 09:01 — fix stale handle.
 - 2026-08-27 11:00 — sync scheduler.
+- 2026-08-28 16:57 — sync scheduler.
