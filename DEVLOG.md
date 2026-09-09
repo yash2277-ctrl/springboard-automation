@@ -37,3 +37,4 @@
 - 2026-08-31 12:18 — sync scheduler.
 - 2026-09-04 15:04 — rotate logs.
 - 2026-09-08 13:53 — sync scheduler.
+- 2026-09-09 19:54 — adjust timing.
