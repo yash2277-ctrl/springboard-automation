@@ -40,3 +40,4 @@
 - 2026-09-09 19:54 — adjust timing.
 - 2026-09-10 13:01 — rotate logs.
 - 2026-09-11 13:23 — sync scheduler.
+- 2026-09-13 18:06 — fix stale handle.
