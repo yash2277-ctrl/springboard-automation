@@ -54,3 +54,4 @@
 - 2026-09-28 17:51 — adjust timing.
 - 2026-09-29 09:50 — adjust timing.
 - 2026-09-29 12:39 — adjust timing.
+- 2026-10-02 12:27 — rotate logs.
