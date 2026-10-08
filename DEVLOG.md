@@ -57,3 +57,4 @@
 - 2026-10-02 12:27 — rotate logs.
 - 2026-10-02 13:01 — fix stale handle.
 - 2026-10-07 09:30 — rotate logs.
+- 2026-10-08 21:59 — adjust timing.
